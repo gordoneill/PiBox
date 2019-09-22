@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <unistd.h>
 
-void bluetooth::bluetooth() :
+void bluetooth::bluetooth(logMgr logger) :
     connected_(false),
-    socket_(-1),
     client_(-1),
-    logger_()
+    logger_(logger)
 {
     socket_ = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
 }
@@ -53,7 +52,7 @@ bool bluetooth::connectToConsole()
     return connected_;
 }
 
-bool bluetooth::send(int size, char * data)
+bool bluetooth::send(int size, byte & data)
 {
     if (connected_)
     {
@@ -70,11 +69,10 @@ bool bluetooth::send(int size, char * data)
     }
 }
 
-bool bluetooth::receive(int & bytesRead, char * data)
+bool bluetooth::receive(int & bytesRead, byte & data)
 {
     if (connected_)
     {
-        char data[1024];
         memset(data, 0, sizeof(data));
 
         // read data from the client
@@ -88,9 +86,4 @@ bool bluetooth::receive(int & bytesRead, char * data)
     {
 
     }
-}
-
-void bluetooth::setLogger(logMgr & logger)
-{
-    logger_ = logger;
 }

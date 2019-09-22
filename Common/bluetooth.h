@@ -11,15 +11,15 @@ class bluetooth
 public:
 	void bluetooth();
 	void ~bluetooth();
-	bool connect();
-	bool receive();
-	bool send();
-	void setLogger(logMgr)
+	bool connectToController();
+	bool connectToConsole();
+	bool send(int size, char * data);
+	bool receive(int & bytesRead, char * data);
 private:
 	int openPort();
 
 	bool connected_;
 	int socket_;
 	int client_;
-	logMgr & logger_;
+	logMgr logger_;
 }
