@@ -11,8 +11,8 @@ void bluetooth::bluetooth(logMgr logger) :
 
 void bluetooth::~bluetooth()
 {
-    close(client);
-    close(s);
+    close(client_);
+    close(socket_);
 }
 
 bool bluetooth::connectToController()
