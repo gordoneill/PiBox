@@ -1,8 +1,8 @@
 /* Name: 		Gordon O'Neill
- * Course: 		System Development Unix Environment Fall 2018
  * File Name: 	log_mgr.h
- * Purpose: 	Declaration of logging methods and variables
+ * Purpose: 	Declaration of logging utility
  */
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -53,5 +53,5 @@ public:
 	void closeLogfile (void);
 
 private:
-	int Fid;
+	int fid_;
 }

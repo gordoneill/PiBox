@@ -1,13 +1,12 @@
 /* Name: 		Gordon O'Neill
- * Course: 		System Development Unix Environment Fall 2018
  * File Name: 	log_mgr.c
- * Purpose: 	instantiation of logging utilities
+ * Purpose: 	instantiation of logging utility
  */
 
 #include "logMgr.h"
 
 void logMgr::logMgr() :
-	Fid(ERROR)
+	fid_(ERROR)
 {
 
 }
@@ -25,11 +24,11 @@ void logMgr::~logMgr()
  */
 int logMgr::logEvent(eLevels l, const char *fmt, ...)
 {
-	if (Fid == ERROR)
+	if (fid_ == ERROR)
 	{
 		setLogfile("logfile");
 	}
-	if (Fid != ERROR)
+	if (fid_ != ERROR)
 	{
 		char log[MAX_LOG_SIZE];
 		memset(log, '\0', sizeof(log));
@@ -71,7 +70,7 @@ int logMgr::logEvent(eLevels l, const char *fmt, ...)
 
 		strcat(log, "\n");
 
-		if (write(Fid, log, strlen(log)) != strlen(log))
+		if (write(fid_, log, strlen(log)) != strlen(log))
 		{
 			return ERROR;
 		}
@@ -96,7 +95,7 @@ int logMgr::setLogfile(const char *logfile_name)
 	if (tmpFid != ERROR)
 	{
 		close_logfile();
-		Fid = tmpFid;
+		fid_ = tmpFid;
 		return OK;
 	}
 	else
@@ -114,13 +113,13 @@ int logMgr::setLogfile(const char *logfile_name)
  */
 void logMgr::closeLogfile()
 {
-	if (Fid != ERROR)
+	if (fid_ != ERROR)
 	{
 		int retval = 0;
-		retval = close(Fid);
+		retval = close(fid_);
 		if(retval != ERROR)
 		{
-			Fid = -1;
+			fid_ = -1;
 		}
 		else
 		{
