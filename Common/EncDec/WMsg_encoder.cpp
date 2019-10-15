@@ -7,8 +7,7 @@
 #include <time.h>       /* time */
 #include <limits.h>
 #include <float.h>
-
-int tests_run = 10;
+#include "WMsg_encoder.h"
 
 using namespace std;
  
@@ -19,25 +18,25 @@ void TxWMsg (WMessage TxWMsg, WPacket & TxWPkt)
 	//construct data packet based on message type
 	switch(TxWMsg.type) {
 		//Constructs a heartbeat message
-		case 0:
+		case eMsgTypes::STATUS:
 			TxWPkt.word_0 = 0;
-			TxWPkt.word_1 = static_cast<long int>(TxWMsg.type);
-			TxWPkt.word_2 = 0;
+			TxWPkt.word_1 = TxWMsg.type;
+			TxWPkt.word_2 = TxWMsg.battery;
 			TxWPkt.word_3 = 0;
 			break;
 			
 		//Constructs a direction message
-		case 1:
+		case eMsgTypes::DIRECTION:
 			TxWPkt.word_0 = 0;
-			TxWPkt.word_1 = static_cast<long int>(TxWMsg.type);
+			TxWPkt.word_1 = TxWMsg.type;
 			TxWPkt.word_2 = TxWMsg.x_dir;
 			TxWPkt.word_3 = TxWMsg.y_dir;
 			break;
 			
 		//Constructs a button message
-		case 2:
+		case eMsgTypes::BUTTON:
 			TxWPkt.word_0 = 0;
-			TxWPkt.word_1 = static_cast<long int>(TxWMsg.type);
+			TxWPkt.word_1 = TxWMsg.type;
 			TxWPkt.word_2 = 0;
 			TxWPkt.word_3 = 0;
 			
@@ -54,22 +53,14 @@ void TxWMsg (WMessage TxWMsg, WPacket & TxWPkt)
 				TxWPkt.word_3 = static_cast<float>(static_cast<int>(TxWPkt.word_3) | 4);
 			break;
 			
-		//Constructs a battery message
-		case 3:
-			TxWPkt.word_0 = 0;
-			TxWPkt.word_1 = static_cast<long int>(TxWMsg.type);	
-			TxWPkt.word_2 = 0;
-			TxWPkt.word_3 = static_cast<float>(TxWMsg.battery);
-;
-			break;
-			
 		//all other cases handled
 		default:
 			TxWPkt.word_0 = 0;
 			TxWPkt.word_1 = 0;
 			TxWPkt.word_2 = 0;
 			TxWPkt.word_3 = 0;
-			WMsgError();
+			//WMsgError();
+			break;
 	}
 }
 
@@ -121,10 +112,4 @@ void SetWMsgBatt (int Msg_batt, WMessage & SetMsg)
 {
 	SetMsg.battery = Msg_batt;
 	return;
-}
-
-void WMsgError()
-{
-    //set breakpoint here when debugging why Error_Handler was called
-    while(1);
 }

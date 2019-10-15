@@ -7,7 +7,7 @@
 #include <time.h>       /* time */
 #include <limits.h>
 #include <float.h>
-#include "WMsg_encoder.h"
+#include "WMsg_structs.h"
 
 using namespace std;
 
@@ -33,5 +33,3 @@ void SetWMsgBBtn(bool Msg_b, WMessage & SetMsg);
 void SetWMsgStkBtn(bool Msg_stk, WMessage & SetMsg);
 
 void SetWMsgBatt(int Msg_batt, WMessage & SetMsg);
-
-void WMsgError();
