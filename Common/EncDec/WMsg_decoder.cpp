@@ -7,6 +7,7 @@
 #include <time.h>       /* time */
 #include <limits.h>
 #include <float.h>
+#include "WMsg_decoder.h"
 
 using namespace std;
 
@@ -67,7 +68,8 @@ void RxWMsg (WMessage RxWMsg, WPacket RxWPkt)
 			
 		//all other cases handled
 		default:
-			WMsgError();
+			//WMsgError();
+			break;
 	}
 	return;
 }
@@ -84,7 +86,7 @@ float GetWMsgXdir (WMessage RxWMsg)
 		return RxWMsg.x_dir;
 	else
 	{	
-		WMsgError();
+		//WMsgError();
 		return 0;
 	}
 }
@@ -95,7 +97,7 @@ float GetWMsgYdir (WMessage RxWMsg)
 		return RxWMsg.y_dir;
 	else
 	{	
-		WMsgError();
+		//WMsgError();
 		return 0;
 	}
 }
@@ -112,7 +114,7 @@ WBtns GetWMsgAllBtns (WMessage RxWMsg)
 	}
 	else
 	{	
-		WMsgError();
+		//WMsgError();
 		RxWBtns.a_btn = false;
 		RxWBtns.b_btn = false;
 		RxWBtns.stk_btn = false;
@@ -126,7 +128,7 @@ bool GetWMsgABtn (WMessage RxWMsg)
 		return RxWMsg.a_btn;
 	else
 	{	
-		WMsgError();
+		//WMsgError();
 		return 0;
 	}
 }
@@ -137,7 +139,7 @@ bool GetWMsgBBtn (WMessage RxWMsg)
 		return RxWMsg.b_btn;
 	else
 	{	
-		WMsgError();
+		//WMsgError();
 		return 0;
 	}
 }
@@ -148,7 +150,7 @@ bool GetWMsgStkBtn (WMessage RxWMsg)
 		return RxWMsg.stk_btn;
 	else
 	{	
-		WMsgError();
+		//WMsgError();
 		return 0;
 	}
 }
@@ -159,13 +161,9 @@ int GetMsgBatt (WMessage RxWMsg)
 		return RxWMsg.battery;
 	else
 	{	
-		WMsgError();
+		//WMsgError();
 		return 0;
 	}
 }
 
-void WMsgError()
-{
-    //set breakpoint here when debugging why Error_Handler was called
-    while(1);
-}
+
