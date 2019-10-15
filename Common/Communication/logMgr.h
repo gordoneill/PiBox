@@ -26,11 +26,11 @@ typedef enum {
 	FATAL
 } eLevels;
 
-class logMgr
+class LogMgr
 {
 public:
-	void logMgr();
-	void ~logMgr();
+    LogMgr();
+    ~LogMgr();
 
 	/*  @brief     Writes logs to file specified by set_logfile, else a default file
 	 *  @param l   Severity level of log
@@ -54,4 +54,4 @@ public:
 
 private:
 	int fid_;
-}
+};

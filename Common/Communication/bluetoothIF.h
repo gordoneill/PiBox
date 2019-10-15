@@ -1,16 +1,17 @@
 #include <sys/socket.h>
 #include <bluetooth/bluetooth.h>
-#include <bluetooth/rfcomm.h>
+#include <bluetooth/hci.h>
+#include <bluetooth/hci_lib.h>
 #include "logMgr.h"
 
 #define CONSOLE_ADDR    "01:23:45:67:89:AB"
 #define CONTROLLER_ADDR "01:23:45:67:89:AB"
 
-class bluetooth
+class Bluetooth
 {
 public:
-	void bluetooth();
-	void ~bluetooth();
+    Bluetooth();
+    ~Bluetooth();
 	bool connectToController();
 	bool connectToConsole();
 	bool send(int size, char * data);
@@ -21,5 +22,5 @@ private:
 	bool connected_;
 	int socket_;
 	int client_;
-	logMgr logger_;
-}
+    LogMgr logger_;
+};

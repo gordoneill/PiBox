@@ -1,21 +1,22 @@
 #include <stdio.h>
 #include <unistd.h>
+#include "bluetoothIF.h"
 
-void bluetooth::bluetooth(logMgr logger) :
+Bluetooth::Bluetooth() :
     connected_(false),
     client_(-1),
-    logger_(logger)
+    logger_()
 {
     socket_ = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
 }
 
-void bluetooth::~bluetooth()
+Bluetooth::~Bluetooth()
 {
     close(client_);
     close(socket_);
 }
 
-bool bluetooth::connectToController()
+bool Bluetooth::connectToController()
 {
     struct sockaddr_rc loc_addr = { 0 }, rem_addr = { 0 };
     
@@ -37,7 +38,7 @@ bool bluetooth::connectToController()
     return connected_;
 }
 
-bool bluetooth::connectToConsole()
+bool Bluetooth::connectToConsole()
 {
     struct sockaddr_rc loc_addr = { 0 }, rem_addr = { 0 };
     
@@ -52,7 +53,7 @@ bool bluetooth::connectToConsole()
     return connected_;
 }
 
-bool bluetooth::send(int size, byte & data)
+bool Bluetooth::send(int size, byte & data)
 {
     if (connected_)
     {
@@ -69,7 +70,7 @@ bool bluetooth::send(int size, byte & data)
     }
 }
 
-bool bluetooth::receive(int & bytesRead, byte & data)
+bool Bluetooth::receive(int & bytesRead, byte & data)
 {
     if (connected_)
     {

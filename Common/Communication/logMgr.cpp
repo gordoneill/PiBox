@@ -5,13 +5,13 @@
 
 #include "logMgr.h"
 
-void logMgr::logMgr() :
+LogMgr::LogMgr() :
 	fid_(ERROR)
 {
 
 }
 
-void logMgr::~logMgr()
+LogMgr::~LogMgr()
 {
 	closeLogfile();
 }
@@ -22,7 +22,7 @@ void logMgr::~logMgr()
  *  @param ... Additional arguments (i.e. message string pointer)
  *  @return    OK (0) if write was successful or ERRROR (-1)
  */
-int logMgr::logEvent(eLevels l, const char *fmt, ...)
+int LogMgr::logEvent(eLevels l, const char *fmt, ...)
 {
 	if (fid_ == ERROR)
 	{
@@ -89,20 +89,20 @@ int logMgr::logEvent(eLevels l, const char *fmt, ...)
  *  @param logfile_name Character pointer of new log file name
  *  @return             OK (0) if open was successful or ERRROR (-1)
  */
-int logMgr::setLogfile(const char *logfile_name)
+int LogMgr::setLogfile(const char *logfile_name)
 {
 	int tmpFid = open(logfile_name, O_APPEND|O_WRONLY|O_SYNC|O_CREAT, FULL_PERMISSION);
 	if (tmpFid != ERROR)
 	{
-		close_logfile();
+        closeLogfile();
 		fid_ = tmpFid;
 		return OK;
 	}
 	else
-	{
-		char * buffer;
-		sprintf(buffer, "System call 'open' returned an error value of %d", tmpFid);
-		perror(buffer);
+    {
+        char * buffer;
+        sprintf(buffer, "System call 'open' returned an error value of %d", tmpFid);
+        perror(buffer);
 		return ERROR;
 	}
 }
@@ -111,7 +111,7 @@ int logMgr::setLogfile(const char *logfile_name)
  *  @param  none
  *  @return void
  */
-void logMgr::closeLogfile()
+void LogMgr::closeLogfile()
 {
 	if (fid_ != ERROR)
 	{
