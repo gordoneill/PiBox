@@ -29,11 +29,11 @@ long_line_column=72
 
 [files]
 current_page=4
-FILE_NAME_0=0;C++;0;EUTF-8;0;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FbluetoothIF.cpp;0;4
-FILE_NAME_1=0;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FbluetoothIF.h;0;4
-FILE_NAME_2=0;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FlogMgr.cpp;0;4
-FILE_NAME_3=0;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FlogMgr.h;0;4
-FILE_NAME_4=0;C++;0;EUTF-8;0;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FmainController.cpp;0;4
+FILE_NAME_0=300;C++;0;EUTF-8;0;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FbluetoothIF.cpp;0;4
+FILE_NAME_1=209;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FbluetoothIF.h;0;4
+FILE_NAME_2=974;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FlogMgr.cpp;0;4
+FILE_NAME_3=397;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FlogMgr.h;0;4
+FILE_NAME_4=508;C++;0;EUTF-8;0;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FmainConsole.cpp;0;4
 
 [VTE]
 last_dir=/home/pi

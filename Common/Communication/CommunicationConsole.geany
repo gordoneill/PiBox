@@ -33,19 +33,19 @@ FILE_NAME_0=1618;C++;0;EUTF-8;0;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommun
 FILE_NAME_1=484;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FbluetoothIF.h;0;4
 FILE_NAME_2=548;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FlogMgr.cpp;0;4
 FILE_NAME_3=202;C++;0;EUTF-8;1;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FlogMgr.h;0;4
-FILE_NAME_4=408;C++;0;EUTF-8;0;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FmainConsole.cpp;0;4
+FILE_NAME_4=508;C++;0;EUTF-8;0;1;0;%2Fhome%2Fpi%2Fgit%2FPiBox%2FCommon%2FCommunication%2FmainConsole.cpp;0;4
 
 [VTE]
 last_dir=/home/pi
 
 [build-menu]
 C++FT_01_LB=_Build
-C++FT_01_CM=g++ -lbluetooth -Wall -o CommunicationThread mainConsole.cpp logMgr.cpp bluetoothIF.cpp
+C++FT_01_CM=g++ -lbluetooth -Wall -o CommunicationThreadConsole mainConsole.cpp logMgr.cpp bluetoothIF.cpp
 C++FT_01_WD=/home/pi/git/PiBox/Common/Communication
 filetypes=C++;
 C++FT_00_LB=_Compile
 C++FT_00_CM=g++ -lbluetooth -Wall -c "%f"
 C++FT_00_WD=
 EX_00_LB=_Execute
-EX_00_CM="./CommunicationThread
+EX_00_CM="./CommunicationThreadConsole
 EX_00_WD=

@@ -6,8 +6,7 @@ int main(int argc, char *argv[])
     bool okay = true;
     LogMgr logger;
     okay = okay && logger.setLogfile("CommunicationLog.log");
-    Bluetooth connection;
-    connection.setLogger(&logger);
+    Bluetooth connection(logger);
     okay = okay && connection.connectToController();
     
     int bytesRead = 0;

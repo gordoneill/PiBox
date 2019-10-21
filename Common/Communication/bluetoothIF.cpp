@@ -2,10 +2,10 @@
 #include <unistd.h>
 #include "bluetoothIF.h"
 
-Bluetooth::Bluetooth() :
+Bluetooth::Bluetooth(LogMgr & logger) :
     connected_(false),
     client_(-1),
-    logger_()
+    logger_(logger)
 {
     socket_ = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
 }
@@ -37,7 +37,7 @@ bool Bluetooth::connectToController()
 
     connected_ = true;
     
-    logger_->logEvent(eLevels::INFO, 
+    logger_.logEvent(eLevels::INFO, 
             "Bluetooth::connectToController - socket_: %d, client_: %d", 
             socket_, client_);
 
@@ -56,7 +56,7 @@ bool Bluetooth::connectToConsole()
     // connect to server
     connected_ = connect(socket_, (struct sockaddr *)&addr, sizeof(addr));
     
-    logger_->logEvent(eLevels::INFO, 
+    logger_.logEvent(eLevels::INFO, 
                 "Bluetooth::connectToConsole - connected: %d", connected_);
 
     return connected_;
@@ -70,13 +70,13 @@ bool Bluetooth::send(int size, char * data)
         okay = okay && write(socket_, data, size);
         if(!okay)
         {
-            logger_->logEvent(eLevels::FATAL, 
+            logger_.logEvent(eLevels::FATAL, 
                 "Bluetooth::send - failed to write");
         }
     }
     else
     {
-        logger_->logEvent(eLevels::FATAL, 
+        logger_.logEvent(eLevels::FATAL, 
             "Bluetooth::send - not connected");
     }
     return okay;
@@ -97,13 +97,8 @@ bool Bluetooth::receive(int & bytesRead, char * data)
     else
     {
         okay = false;
-        logger_->logEvent(eLevels::FATAL, 
+        logger_.logEvent(eLevels::FATAL, 
             "Bluetooth::receive - not connected");
     }
     return okay;
-}
-
-void Bluetooth::setLogger(LogMgr * logger)
-{
-    logger_ = logger;
 }
