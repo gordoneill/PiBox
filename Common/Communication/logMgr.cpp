@@ -4,6 +4,8 @@
  */
 
 #include "logMgr.h"
+#include <string>
+#include <cstring>
 
 LogMgr::LogMgr() :
 	fid_(ERROR)
@@ -30,24 +32,23 @@ int LogMgr::logEvent(eLevels l, const char *fmt, ...)
 	}
 	if (fid_ != ERROR)
 	{
-		char log[MAX_LOG_SIZE];
-		memset(log, '\0', sizeof(log));
+		std::string log;
 
 		time_t curTime;
 		time(&curTime);
-		strcpy(log, ctime(&curTime));
-		log[strlen(log) - 1] = ':';
+		log = ctime(&curTime);
+		log += ':';
 
 		switch (l)
 		{
 		  case INFO: 
-			strcat(log, "INFO:");
+			log += "INFO:";
 			break;
 		  case WARNING: 
-			strcat(log, "WARNING:");
+			log += "WARNING:";
 			break;
 		  case FATAL:
-			strcat(log, "FATAL:");
+			log += "FATAL:";
 			break;
 		  default:
 			return ERROR;
@@ -65,12 +66,12 @@ int LogMgr::logEvent(eLevels l, const char *fmt, ...)
 		}
 		else
 		{
-			strcat(log, tmpString);
+			log += std::string(tmpString);
 		}
 
-		strcat(log, "\n");
+		log += "\n";
 
-		if (write(fid_, log, strlen(log)) != strlen(log))
+		if (write(fid_, log.c_str(), log.length()) != (int) log.length())
 		{
 			return ERROR;
 		}
@@ -83,6 +84,7 @@ int LogMgr::logEvent(eLevels l, const char *fmt, ...)
 	{
 		return ERROR;
 	}
+	return OK;
 }
 
 /*  @brief              Opens and sets new log file
@@ -100,9 +102,9 @@ int LogMgr::setLogfile(const char *logfile_name)
 	}
 	else
     {
-        char * buffer;
-        sprintf(buffer, "System call 'open' returned an error value of %d", tmpFid);
-        perror(buffer);
+        std::string buffer;
+        buffer = "System call 'open' returned an error value of " + std::to_string(tmpFid);
+        perror(buffer.c_str());
 		return ERROR;
 	}
 }
@@ -123,9 +125,9 @@ void LogMgr::closeLogfile()
 		}
 		else
 		{
-			char * buffer;
-			sprintf(buffer, "System call 'close' returned an error value of %d", retval);
-			perror(buffer);
+			std::string buffer;
+			buffer = "System call 'close' returned an error value of " + std::to_string(retval);
+			perror(buffer.c_str());
 		}
 	}
 }
