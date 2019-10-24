@@ -1,6 +1,6 @@
 #include "bluetoothIF.h"
 #include <string>
-#include <stdio>
+#include <iostream>
 
 int main(int argc, char *argv[])
 {
