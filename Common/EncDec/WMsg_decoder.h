@@ -1,3 +1,6 @@
+#ifndef WMSG_DECODER_FILE_H
+#define WMSG_DECODER_FILE_H
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -11,20 +14,25 @@
 
 using namespace std;
 
-void RxWMsg(WMessage RxWMsg, WPacket RxWPkt);
+WPacket SocketToPacket (int size, WPacket *address);
 
-int GetWMsgType(WMessage RxWMsg);
+/**
+  * @brief  Decodes a Wireless Packet into a Wireless Message
+  * @param  struct WMessage, struct WPacket
+  * @retval none
+  */
+WMessage RxWMsg (WPacket RxWPkt);
 
-float GetWMsgXdir(WMessage RxWMsg);
+eMsgTypes GetWMsgType (WMessage RxWMsg);
 
-float GetWMsgYdir(WMessage RxWMsg);
+uint32_t GetWMsgXdir (WMessage RxWMsg);
 
-WBtns GetWMsgAllBtns(WMessage RxWMsg);
+uint32_t GetWMsgYdir (WMessage RxWMsg);
 
-bool GetWMsgABtn(WMessage RxWMsg);
+eButtons GetWMsgBtn (WMessage RxWMsg);
 
-bool GetWMsgBBtn(WMessage RxWMsg);
+bool GetWMsgBtnState (WMessage RxWMsg);
 
-bool GetWMsgStkBtn(WMessage RxWMsg);
+uint32_t GetWMsgBatt (WMessage RxWMsg);
 
-int GetMsgBatt(WMessage RxWMsg);
+#endif

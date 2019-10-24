@@ -1,3 +1,6 @@
+#ifndef WMSG_ENCODER_FILE_H
+#define WMSG_ENCODER_FILE_H
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -13,23 +16,19 @@ using namespace std;
 
 /**
   * @brief  Sets up the Wireless Packet for transmission using a Wireless mesaage struct
-  * @param  struct WMessage, struct WPacket
-  * @retval none
+  * @param  struct WMessage
+  * @retval struct WPacket
   */
-void TxWMsg(WMessage TxWMsg, WPacket & TxWPkt);
+WPacket TxWMsg (WMessage TxWMsg);
 
-void SetWMsgType(int Msg_type, WMessage & SetMsg);
+void SetWMsgType (eMsgTypes Msg_type, WMessage & SetMsg);
 
-void SetWMsgXdir(float Msg_x, WMessage & SetMsg);
+void SetWMsgXdir (uint32_t Msg_x, WMessage & SetMsg);
 
-void SetWMsgYdir(float Msg_y, WMessage & SetMsg);
+void SetWMsgYdir (uint32_t Msg_y, WMessage & SetMsg);
 
-void SetWMsgAllBtns(bool Msg_a, bool Msg_b, bool Msg_stk, WMessage & SetMsg);
+void SetWMsgBtn (eButtons Msg_Btn, bool Btn_state, WMessage & SetMsg);
 
-void SetWMsgABtn(bool Msg_a, WMessage & SetMsg);
+void SetWMsgBatt (uint32_t Msg_batt, WMessage & SetMsg);
 
-void SetWMsgBBtn(bool Msg_b, WMessage & SetMsg);
-
-void SetWMsgStkBtn(bool Msg_stk, WMessage & SetMsg);
-
-void SetWMsgBatt(int Msg_batt, WMessage & SetMsg);
+#endif

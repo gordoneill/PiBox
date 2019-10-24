@@ -7,82 +7,99 @@
 #include <time.h>       /* time */
 #include <limits.h>
 #include <float.h>
+#include <string.h>
 #include "WMsg_decoder.h"
 
 using namespace std;
 
-void RxWMsg (WMessage RxWMsg, WPacket RxWPkt)
+WPacket SocketToPacket (int size, WPacket *address)
 {
-	long int header = RxWPkt.word_1;
-	switch(header) {
+	WPacket tmpPacket;
+	memcpy(&tmpPacket, address, size);
+	return tmpPacket;
+}
+
+
+WMessage RxWMsg (WPacket RxWPkt)
+{
+	WMessage RxWMsg;
+	uint32_t header_0 = RxWPkt.word_0;
+	uint32_t data_0 = RxWPkt.word_1;
+	uint32_t data_1 = RxWPkt.word_2;
+
+	//sets default message
+	RxWMsg.type = INVALID;
+	RxWMsg.x_dir = 0;
+	RxWMsg.y_dir = 0;
+	RxWMsg.button = NONE;
+	RxWMsg.btnState = false;
+	RxWMsg.battery = 0;
+
+	switch(header_0) {
+	
 		//Check for heartbeat message
-		case 0:
+		case 1:
 			//type and buttons are set. direction remains as previous value. 
-			RxWMsg.type = 0;
-			RxWMsg.a_btn = false;
-			RxWMsg.b_btn = false;
-			RxWMsg.stk_btn = false;
+			RxWMsg.type = STATUS;
+			RxWMsg.battery = data_0;
 			break;
 			
 		//Check for direction message
-		case 1:
+		case 2:
 			//sets the message type, direction, and button values
-			RxWMsg.type = 1;
-			RxWMsg.x_dir = RxWPkt.word_2;
-			RxWMsg.y_dir = RxWPkt.word_3;
-			RxWMsg.a_btn = false;
-			RxWMsg.b_btn = false;
-			RxWMsg.stk_btn = false;
+			RxWMsg.type = DIRECTION;
+			RxWMsg.x_dir = data_0;
+			RxWMsg.y_dir = data_1;
 			break;
 			
 		//Checks for button message
-		case 2:
-			//type and buttons are set. direction remains as previous value. 
-			RxWMsg.type = 2;
-			//checks A button flag
-			if(static_cast<int>(RxWPkt.word_3) & 1)
-				RxWMsg.a_btn = true;
-			else
-				RxWMsg.a_btn = false;
-			//checks B button flag
-			if(static_cast<int>(RxWPkt.word_3) & 2)
-				RxWMsg.b_btn = true;
-			else
-				RxWMsg.b_btn = false;
-			//checks stick button flag
-			if(static_cast<int>(RxWPkt.word_3) & 4)
-				RxWMsg.stk_btn = true;
-			else
-				RxWMsg.stk_btn = false;
-			break;
-			
-		//Checks for battery message
 		case 3:
-			//Sets battery status, type, and buttons
-			RxWMsg.type = 3;
-			RxWMsg.a_btn = false;
-			RxWMsg.b_btn = false;
-			RxWMsg.stk_btn = false;
-			RxWMsg.battery = static_cast<int>(RxWPkt.word_3);
+			//type and buttons are set.
+			RxWMsg.type = BUTTON;
+			switch(data_0) {
+				//Sets the button data word
+				case 1:
+					RxWMsg.button = BTN_A;
+					break;
+				case 2:
+					RxWMsg.button = BTN_B;
+					break;
+				case 4:
+					RxWMsg.button = BTN_STICK;
+					break;
+				default:
+					RxWMsg.button = NONE;
+					break;
+			}
+			if(data_1)
+				RxWMsg.btnState = true;
+			else
+				RxWMsg.btnState = false;
 			break;
 			
 		//all other cases handled
 		default:
+			RxWMsg.type = INVALID;
+			RxWMsg.x_dir = 0;
+			RxWMsg.y_dir = 0;
+			RxWMsg.button = NONE;
+			RxWMsg.btnState = false;
+			RxWMsg.battery = 0;
 			//WMsgError();
 			break;
 	}
-	return;
+	return RxWMsg;
 }
 
 
-int GetWMsgType (WMessage RxWMsg)
+eMsgTypes GetWMsgType (WMessage RxWMsg)
 {
 	return RxWMsg.type;
 }
 
-float GetWMsgXdir (WMessage RxWMsg)
+uint32_t GetWMsgXdir (WMessage RxWMsg)
 {
-	if (RxWMsg.type == 1)
+	if (RxWMsg.type == DIRECTION)
 		return RxWMsg.x_dir;
 	else
 	{	
@@ -91,9 +108,9 @@ float GetWMsgXdir (WMessage RxWMsg)
 	}
 }
 
-float GetWMsgYdir (WMessage RxWMsg)
+uint32_t GetWMsgYdir (WMessage RxWMsg)
 {
-	if (RxWMsg.type == 1)
+	if (RxWMsg.type == DIRECTION)
 		return RxWMsg.y_dir;
 	else
 	{	
@@ -102,62 +119,33 @@ float GetWMsgYdir (WMessage RxWMsg)
 	}
 }
 
-WBtns GetWMsgAllBtns (WMessage RxWMsg)
+eButtons GetWMsgBtn (WMessage RxWMsg)
 {
-	struct WBtns RxWBtns;
-	if (RxWMsg.type == 2)
+	if (RxWMsg.type == BUTTON)
 	{
-		RxWBtns.a_btn = RxWMsg.a_btn;
-		RxWBtns.b_btn = RxWMsg.b_btn;
-		RxWBtns.stk_btn = RxWMsg.stk_btn;
-		return RxWBtns;
+		return RxWMsg.button;
 	}
 	else
 	{	
 		//WMsgError();
-		RxWBtns.a_btn = false;
-		RxWBtns.b_btn = false;
-		RxWBtns.stk_btn = false;
-		return RxWBtns;	
+		return NONE;
 	}
 }
 
-bool GetWMsgABtn (WMessage RxWMsg)
+bool GetWMsgBtnState (WMessage RxWMsg)
 {
-	if (RxWMsg.type == 2)
-		return RxWMsg.a_btn;
+	if (RxWMsg.type == BUTTON)
+		return RxWMsg.btnState;
 	else
 	{	
 		//WMsgError();
-		return 0;
+		return false;
 	}
 }
 
-bool GetWMsgBBtn (WMessage RxWMsg)
+uint32_t GetWMsgBatt (WMessage RxWMsg)
 {
-	if (RxWMsg.type == 2)
-		return RxWMsg.b_btn;
-	else
-	{	
-		//WMsgError();
-		return 0;
-	}
-}
-
-bool GetWMsgStkBtn (WMessage RxWMsg)
-{
-	if (RxWMsg.type == 2)
-		return RxWMsg.stk_btn;
-	else
-	{	
-		//WMsgError();
-		return 0;
-	}
-}
-
-int GetMsgBatt (WMessage RxWMsg)
-{
-	if (RxWMsg.type == 3)
+	if (RxWMsg.type == STATUS)
 		return RxWMsg.battery;
 	else
 	{	
