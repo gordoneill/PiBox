@@ -31,6 +31,9 @@ bool Bluetooth::connectToController()
     
     listen(socket_, 1);
 
+    logger_.logEvent(eLevels::FATAL, 
+            "Bluetooth::connectToController - waiting for connection");
+
     // accept one connection
     socklen_t opt = sizeof(rem_addr);
     client_ = accept(socket_, (struct sockaddr *)&rem_addr, &opt);
