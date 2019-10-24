@@ -4,6 +4,8 @@
 #include <bluetooth/hci_lib.h>
 #include <bluetooth/rfcomm.h>
 #include "logMgr.h"
+#include <sys/ioctl.h>
+#include <linux/sockios.h>
 
 #define CONSOLE_ADDR    "B8:27:EB:47:19:28"
 
@@ -16,6 +18,7 @@ public:
 	bool connectToConsole();
 	bool send(int size, char * data);
 	bool receive(int & bytesRead, char * data);
+	bool isDataAvaiable();
 private:
 	bool     connected_;
 	int      socket_;

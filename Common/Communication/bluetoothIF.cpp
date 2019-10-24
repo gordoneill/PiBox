@@ -54,7 +54,15 @@ bool Bluetooth::connectToConsole()
     str2ba(CONSOLE_ADDR, &addr.rc_bdaddr);
 
     // connect to server
-    connected_ = connect(socket_, (struct sockaddr *)&addr, sizeof(addr));
+    while (!connected_)
+    {
+        logger_.logEvent(eLevels::INFO, 
+                "Bluetooth::connectToConsole - attemping connection ...");
+        connected_ = connect(socket_, (struct sockaddr *)&addr, sizeof(addr)) == OK;
+        sleep(5);
+    }
+
+    client_ = socket_;
     
     logger_.logEvent(eLevels::INFO, 
                 "Bluetooth::connectToConsole - connected: %d", connected_);
@@ -67,7 +75,7 @@ bool Bluetooth::send(int size, char * data)
     bool okay = true;
     if (connected_)
     {
-        okay = okay && write(socket_, data, size);
+        okay = okay && write(client_, data, size) == OK;
         if(!okay)
         {
             logger_.logEvent(eLevels::FATAL, 
@@ -87,8 +95,10 @@ bool Bluetooth::receive(int & bytesRead, char * data)
     bool okay = true;
     if (connected_)
     {
+        int dataAmount = 0;
+        ioctl(client_, SIOCINQ, &dataAmount);
         // read data from the client
-        bytesRead = read(client_, data, sizeof(data));
+        bytesRead = read(client_, data, dataAmount);
         if(bytesRead > 0) 
         {
             printf("received [%s]\n", data);
@@ -101,4 +111,16 @@ bool Bluetooth::receive(int & bytesRead, char * data)
             "Bluetooth::receive - not connected");
     }
     return okay;
+}
+
+bool Bluetooth::isDataAvaiable()
+{
+    bool data = false;
+    int dataAmount = 0;
+    ioctl(client_, SIOCINQ, &dataAmount);
+    if (dataAmount > 0)
+    {
+        data = true;
+    }
+    return data;
 }

@@ -5,15 +5,24 @@ int main(int argc, char *argv[])
 {
     bool okay = true;
     LogMgr logger;
-    okay = okay && logger.setLogfile("CommunicationLog.log");
+    okay = okay && logger.setLogfile("CommunicationLog.log") == OK;
     Bluetooth connection(logger);
     okay = okay && connection.connectToController();
-    
-    std::string toSend = "hello";
-    okay = okay && connection.send(toSend.length(), (char *)toSend.c_str());
-    
-    //msg
-    //okay = okay && connection.send(sizeof(msg), (char *)&msg);
+
+    int bytesRead = 0;
+    std::string dataOut;
+
+    while(1)
+    {
+        std::cout << "Type something in (followed by enter): \n";
+        std::cin >> dataOut;
+        okay = okay && connection.send(dataOut.length(), (char *) &dataOut);
+        if (connection.isDataAvailable())
+        {
+            okay = okay && connection.receive(bytesRead, (char *) &dataOut);
+            std::cout << dataOut << std::endl;
+        }
+    }
 
     return okay;
 }
