@@ -31,7 +31,7 @@ bool Bluetooth::connectToController()
     
     listen(socket_, 1);
 
-    logger_.logEvent(eLevels::FATAL, 
+    logger_.logEvent(eLevels::INFO, 
             "Bluetooth::connectToController - waiting for connection");
 
     // accept one connection
@@ -59,7 +59,7 @@ bool Bluetooth::connectToConsole()
     // connect to server
     while (!connected_)
     {
-        logger_.logEvent(eLevels::INFO, 
+        logger_.logEvent(eLevels::WARNING, 
                 "Bluetooth::connectToConsole - attemping connection ...");
         connected_ = connect(socket_, (struct sockaddr *)&addr, sizeof(addr)) == OK;
         sleep(5);
