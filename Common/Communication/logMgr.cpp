@@ -37,6 +37,7 @@ int LogMgr::logEvent(eLevels l, const char *fmt, ...)
 		time_t curTime;
 		time(&curTime);
 		log = ctime(&curTime);
+		log.pop_back();
 		log += ':';
 
 		switch (l)
