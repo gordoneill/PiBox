@@ -113,7 +113,7 @@ bool Bluetooth::receive(int & bytesRead, char * data)
     return okay;
 }
 
-bool Bluetooth::isDataAvaiable()
+bool Bluetooth::isDataAvailable()
 {
     bool data = false;
     int dataAmount = 0;

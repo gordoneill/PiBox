@@ -18,7 +18,7 @@ public:
 	bool connectToConsole();
 	bool send(int size, char * data);
 	bool receive(int & bytesRead, char * data);
-	bool isDataAvaiable();
+	bool isDataAvailable();
 private:
 	bool     connected_;
 	int      socket_;
