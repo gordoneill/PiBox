@@ -1,0 +1,1 @@
+g++ -lbluetooth -o CommThread CommThreadMain.cpp Communication/bluetoothIF.cpp EncDec/WMsg_decoder.cpp EncDec/WMsg_encoder.cpp Util/logMgr.cpp

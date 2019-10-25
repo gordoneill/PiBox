@@ -78,7 +78,7 @@ bool Bluetooth::send(int size, char * data)
     bool okay = true;
     if (connected_)
     {
-        okay = okay && write(client_, data, size) == OK;
+        okay = okay && write(client_, data, size) == size;
         if(!okay)
         {
             logger_.logEvent(eLevels::FATAL, 
