@@ -4,6 +4,9 @@
 #include <string>
 #include <iostream>
 #include <mqueue.h>
+#include <vector>
+#include <stdlib.h>
+#include <unistd.h>
 
 enum eSystemType {
     CONSOLE,
@@ -28,7 +31,7 @@ int main(int argc, char *argv[])
     eSystemType systemType = eSystemType::CONSOLE;
     if (argc > 1)
     {
-        if strcmp(to_string(argv[1]), "CONTROLLER")
+        if (strcmp(to_string(argv[1]), "CONTROLLER"))
         {
             systemType = eSystemType::CONTROLLER
         }
@@ -52,6 +55,7 @@ int main(int argc, char *argv[])
     sendBox = mq_open("sendBox", O_RDONLY|O_CREAT|O_EXCL, 0666, 0); 
     // mailbox to put messges in received over bluetooth
     recvBox = mq_open("recvBox", O_RDWR|O_CREAT|O_EXCL, 0666, 0); 
+    struct sigevent sev;
     sev.sigev_notify = SIGEV_THREAD;
     sev.sigev_notify_function = sendBoxOnData;
     sev.sigev_notify_attributes = NULL;
