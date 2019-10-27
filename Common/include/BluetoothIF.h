@@ -3,7 +3,7 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_lib.h>
 #include <bluetooth/rfcomm.h>
-#include "logMgr.h"
+#include "LogMgr.h"
 #include <sys/ioctl.h>
 #include <linux/sockios.h>
 

@@ -1,4 +1,4 @@
-#include "bluetoothIF.h"
+#include "BluetoothIF.h"
 #include "WMsg_encoder.h"
 #include "WMsg_decoder.h"
 #include <string>

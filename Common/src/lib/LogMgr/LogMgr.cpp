@@ -1,9 +1,9 @@
 /* Name: 		Gordon O'Neill
- * File Name: 	log_mgr.c
+ * File Name: 	LogMgr.c
  * Purpose: 	instantiation of logging utility
  */
 
-#include "logMgr.h"
+#include "LogMgr.h"
 #include <string>
 #include <cstring>
 

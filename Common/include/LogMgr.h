@@ -1,5 +1,5 @@
 /* Name: 		Gordon O'Neill
- * File Name: 	log_mgr.h
+ * File Name: 	LogMgr.h
  * Purpose: 	Declaration of logging utility
  */
 

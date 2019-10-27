@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
-#include "bluetoothIF.h"
+#include "BluetoothIF.h"
 
 Bluetooth::Bluetooth(LogMgr & logger) :
     connected_(false),
