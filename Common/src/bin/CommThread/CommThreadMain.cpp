@@ -6,7 +6,7 @@
 #include <mqueue.h>
 #include <vector>
 #include <stdlib.h>
-#include <unistd.h>
+#include <signal.h>
 
 enum eSystemType {
     CONSOLE,
@@ -31,7 +31,8 @@ int main(int argc, char *argv[])
     eSystemType systemType = eSystemType::CONSOLE;
     if (argc > 1)
     {
-        if (strcmp(to_string(argv[1]), "CONTROLLER"))
+        std::string inputSystem = to_string(argv[1]);
+        if (inputSystem == "CONTROLLER" || inputSystem == "controller")
         {
             systemType = eSystemType::CONTROLLER
         }
@@ -72,9 +73,9 @@ int main(int argc, char *argv[])
             WMessage msgIn = RxWMsg(payload);
             mq_send(recvBox, (char *) &msgIn, sizeof(msgIn), 1);
         }
-        if (!sendQueue.isEmpty()) // if data needs to be sent over bluetooth
+        if (!sendQueue.empty()) // if data needs to be sent over bluetooth
         {
-            WPacket payload = TxWMsg(sendQueue.pop());
+            WPacket payload = TxWMsg(sendQueue.pop_back());
             okay = okay && connection.send(sizeof(payload), (char *) &payload);
         }
     }
