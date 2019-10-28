@@ -31,10 +31,10 @@ int main(int argc, char *argv[])
     eSystemType systemType = eSystemType::CONSOLE;
     if (argc > 1)
     {
-        std::string inputSystem = to_string(argv[1]);
+        std::string inputSystem(argv[1]);
         if (inputSystem == "CONTROLLER" || inputSystem == "controller")
         {
-            systemType = eSystemType::CONTROLLER
+            systemType = eSystemType::CONTROLLER;
         }
     }
 
