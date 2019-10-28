@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 #include <mqueue.h>
-#include <vector>
+#include <queue>
 #include <stdlib.h>
 #include <signal.h>
 
@@ -13,7 +13,7 @@ enum eSystemType {
     CONTROLLER
 };
 
-std::vector<WMessage> sendQueue;
+std::queue<WMessage> sendQueue;
 
 static void sendBoxOnData(union sigval sv)
 {
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     sev.sigev_value.sival_ptr = &sendBox;
     mq_notify(sendBox, &sev);
 
-    while(1)
+    while(okay)
     {
         if (connection.isDataAvailable()) // if data is coming in over bluetooth
         {
@@ -75,10 +75,17 @@ int main(int argc, char *argv[])
         }
         if (!sendQueue.empty()) // if data needs to be sent over bluetooth
         {
-            WPacket payload = TxWMsg(sendQueue.pop_back());
+            WPacket payload = TxWMsg(sendQueue.front());
             okay = okay && connection.send(sizeof(payload), (char *) &payload);
+            if (okay)
+            {
+                sendQueue.pop();
+            }
         }
     }
+
+    logger.logEvent(eLevels::FATAL, "okay became false! Program terminating");
+    std::cerr << "okay became false! Program terminating" << std::endl;
 
     mq_unlink("sendBox");
     mq_unlink("recvBox");
