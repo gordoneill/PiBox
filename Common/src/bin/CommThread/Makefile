@@ -3,15 +3,15 @@
 # Purpose:    Base level makefile, creates executable for install_data
 
 PROJECT_ROOT = ../../..
-LIBDIR = $(PROJECT_ROOT)/lib
-BINDIR = $(PROJECT_ROOT)/bin
-INCLDIR = $(PROJECT_ROOT)/include
+LIBDIR = $(PROJECT_ROOT)/lib/
+BINDIR = $(PROJECT_ROOT)/bin/
+INCLDIR = $(PROJECT_ROOT)/include/
 
 SRCS = CommThreadMain.cpp
 LIBS = $(LIBDIR)/libLogMgr.a $(LIBDIR)/libBluetoothIF.a $(LIBDIR)/libEncDec.a
 OBJS = $(SRCS:.cpp=.o)
 PROJECT = CommThread
-FLAGS = -I$(INCLDIR)
+FLAGS = -I$(INCLDIR) -lrt -lbluetooth
 CC = g++ $(FLAGS)
 
 #Suffix Rule
