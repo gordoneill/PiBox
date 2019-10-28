@@ -10,7 +10,7 @@ SRCS = WMsg_decoder.cpp WMsg_encoder.cpp
 OBJS = $(SRCS:.cpp=.o)
 PROJECT = libEncDec.a
 FLAGS = -I$(INCLDIR)
-CC = gPP $(FLAGS)
+CC = g++ $(FLAGS)
 
 #Suffix Rule
 .cpp.o:
