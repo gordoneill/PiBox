@@ -77,7 +77,6 @@ int main(int argc, char *argv[])
     WMessage msgIn;
     while(okay)
     {
-        std::cout << "Checking mq_receive" << std::endl;
         // if (connection.isDataAvailable()) // if data is coming in over bluetooth
         // {
         //     int bytesRead = 0;
