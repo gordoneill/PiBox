@@ -10,10 +10,7 @@
 
 #define QUEUE_PERMISSIONS 0660
 #define MAX_MESSAGES 10
-#define MAX_MSG_SIZE 256
-
-extern int errno;
-int errnum;
+#define MAX_MQ_MSG_SIZE 256
 
 enum eSystemType {
     CONSOLE,
@@ -29,6 +26,7 @@ static void sendBoxOnData(union sigval sv)
     mqd_t sendBox = *((mqd_t *) sv.sival_ptr);
     mq_receive(sendBox, (char *) &payloadIn, 8192, NULL);
     sendQueue.push(payloadIn);
+    registerMsgInterrupt(sendBox);
     exit(EXIT_SUCCESS);
 }
 
@@ -62,12 +60,12 @@ int main(int argc, char *argv[])
     struct mq_attr attr;
     attr.mq_flags = 0;
     attr.mq_maxmsg = MAX_MESSAGES;
-    attr.mq_msgsize = MAX_MSG_SIZE;
+    attr.mq_msgsize = MAX_MQ_MSG_SIZE;
     attr.mq_curmsgs = 0;
     // mailbox of messages to be sent over bluetooth
-    sendBox = mq_open("/sendBox", O_RDONLY|O_CREAT|O_EXCL, QUEUE_PERMISSIONS, attr);
+    sendBox = mq_open("/sendBox", O_RDWR|O_CREAT|O_EXCL, QUEUE_PERMISSIONS, attr);
     // mailbox to put messges in received over bluetooth
-    recvBox = mq_open("/recvBox", O_WRONLY|O_CREAT|O_EXCL, QUEUE_PERMISSIONS, attr);
+    recvBox = mq_open("/recvBox", O_RDWR|O_CREAT|O_EXCL, QUEUE_PERMISSIONS, attr);
 
     if (sendBox == ERROR)
     {
@@ -75,11 +73,6 @@ int main(int argc, char *argv[])
         okay = false;
         logger.logEvent(eLevels::FATAL, "sendBox opening failed!");
         std::cerr << "sendBox opening failed!" << std::endl;
-
-        errnum = errno;
-        fprintf(stderr, "Value of errno: %d\n", errno);
-        perror("Error printed by perror");
-        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
     }
     if (recvBox == ERROR)
     {
@@ -87,29 +80,15 @@ int main(int argc, char *argv[])
         okay = false;
         logger.logEvent(eLevels::FATAL, "recvBox opening failed!");
         std::cerr << "recvBox opening failed!" << std::endl;
-
-        errnum = errno;
-        fprintf(stderr, "Value of errno: %d\n", errno);
-        perror("Error printed by perror");
-        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
     }
 
-    struct sigevent sev;
-    sev.sigev_notify = SIGEV_THREAD;
-    sev.sigev_notify_function = sendBoxOnData;
-    sev.sigev_notify_attributes = NULL;
-    sev.sigev_value.sival_ptr = &sendBox;
-    
-    if (mq_notify(sendBox, &sev) != OK)
+    okay = okay && registerMsgInterrupt(recvBox);
+
+    if (!okay)
     {
         okay = false;
         logger.logEvent(eLevels::FATAL, "mq_notify failed!");
         std::cerr << "mq_notify failed!" << std::endl;
-
-        errnum = errno;
-        fprintf(stderr, "Value of errno: %d\n", errno);
-        perror("Error printed by perror");
-        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
     }
 
     while(okay)
@@ -143,4 +122,14 @@ int main(int argc, char *argv[])
     mq_close(recvBox);
 
     return okay;
+}
+
+bool registerMsgInterrupt(mqd_t & messageQueue)
+{
+    struct sigevent sev;
+    sev.sigev_notify = SIGEV_THREAD;
+    sev.sigev_notify_function = recvBoxOnData;
+    sev.sigev_notify_attributes = NULL;
+    sev.sigev_value.sival_ptr = &messageQueue;
+    mq_notify(messageQueue, &sev);
 }
