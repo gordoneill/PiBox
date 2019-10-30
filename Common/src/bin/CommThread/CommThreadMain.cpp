@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
         if (mq_receive(sendBox, (char *) &msgIn, sizeof(msgIn), NULL) > 0)
         {
             WPacket payload = TxWMsg(msgIn);
-            std::cout << "Got Msg to send" << std::endl;
+            logger.logEvent(eLevels::INFO, "received message");
             //okay = okay && connection.send(sizeof(payload), (char *) &payload);
         }
     }
