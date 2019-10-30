@@ -5,6 +5,9 @@
 #include <mqueue.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <errno.h>
+
+extern int errno;
 
 enum eSystemType {
     CONSOLE,
@@ -40,7 +43,6 @@ int main(int argc, char *argv[])
     LogMgr logger;
     okay = okay && logger.setLogfile("Logs/CommThreadTest.log");
 
-    sleep(1); // time for mailboxes to be setup
     mqd_t sendBox, recvBox;
     // mailbox of messages to be sent over bluetooth
     sendBox = mq_open("/sendBox", O_RDWR|O_CREAT, 0666, 0);
@@ -85,8 +87,16 @@ int main(int argc, char *argv[])
     		msgOut.type = eMsgTypes::STATUS;
     	}
 
-    	okay = okay && mq_send(sendBox, (char *) &msgOut, sizeof(msgOut), 1) == OK;
+    	okay = okay && mq_send(sendBox, &msgOut, sizeof(msgOut), 1) == OK;
         logger.logEvent(eLevels::INFO, "Placed something in sendBox. okay: %d", okay);
+        int errnum;
+        if (!okay)
+        {
+          errnum = errno;
+          fprintf(stderr, "Value of errno: %d\n", errno);
+          perror("Error printed by perror");
+          fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
+        }
         sleep(1);
     }
 
