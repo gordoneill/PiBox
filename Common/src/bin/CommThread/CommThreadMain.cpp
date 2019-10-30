@@ -77,6 +77,7 @@ int main(int argc, char *argv[])
     WMessage msgIn;
     while(okay)
     {
+        std::cout << "Checking mq_receive" << std::endl;
         // if (connection.isDataAvailable()) // if data is coming in over bluetooth
         // {
         //     int bytesRead = 0;
@@ -88,6 +89,7 @@ int main(int argc, char *argv[])
         if (mq_receive(sendBox, (char *) &msgIn, sizeof(msgIn), NULL) > 0)
         {
             WPacket payload = TxWMsg(msgIn);
+            std::cout << "received message" << std::endl;
             logger.logEvent(eLevels::INFO, "received message");
             //okay = okay && connection.send(sizeof(payload), (char *) &payload);
         }
