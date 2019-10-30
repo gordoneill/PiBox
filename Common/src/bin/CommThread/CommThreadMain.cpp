@@ -36,18 +36,7 @@ static void sendBoxOnData(union sigval sv)
             sendQueue.push(payloadIn);
         }
     }
-
-    // Re-register for new messages on Queue
-    struct sigevent sev;
-    sev.sigev_notify = SIGEV_THREAD;
-    sev.sigev_notify_function = sendBoxOnData;
-    sev.sigev_notify_attributes = NULL;
-    sev.sigev_value.sival_ptr = sv.sival_ptr;
-    if (mq_notify(sendBox, &sev) < 0)
-    {
-        std::cerr << "Error during Reregister in msq_notify : " << strerror(errno) << endl;
-        exit(EXIT_FAILURE);
-    }
+    
     exit(EXIT_SUCCESS);
 }
 
