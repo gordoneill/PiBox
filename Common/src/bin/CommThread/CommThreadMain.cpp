@@ -54,9 +54,17 @@ int main(int argc, char *argv[])
 
     mqd_t sendBox, recvBox;
     // mailbox of messages to be sent over bluetooth
-    sendBox = mq_open("sendBox", O_RDONLY|O_CREAT|O_EXCL, 0666, 0); 
+    sendBox = mq_open("sendBox", O_RDONLY|O_CREAT|O_EXCL, 0666, 0);
     // mailbox to put messges in received over bluetooth
-    recvBox = mq_open("recvBox", O_RDWR|O_CREAT|O_EXCL, 0666, 0); 
+    recvBox = mq_open("recvBox", O_RDWR|O_CREAT|O_EXCL, 0666, 0);
+
+    if (sendBox == ERROR || recvBox == ERROR)
+    {
+        okay = false;
+        logger.logEvent(eLevels::FATAL, "sendBox or recvBox opening failed!");
+        std::cerr << "sendBox or recvBox opening failed!" << std::endl;
+    }
+
     struct sigevent sev;
     sev.sigev_notify = SIGEV_THREAD;
     sev.sigev_notify_function = sendBoxOnData;

@@ -45,6 +45,14 @@ int main(int argc, char *argv[])
     sendBox = mq_open("sendBox", O_RDWR, 0, 0);
     // mailbox of messges received over bluetooth
     recvBox = mq_open("recvBox", O_RDWR, 0, 0);
+
+    if (sendBox == ERROR || recvBox == ERROR)
+    {
+        okay = false;
+        logger.logEvent(eLevels::FATAL, "sendBox or recvBox opening failed!");
+        std::cerr << "sendBox or recvBox opening failed!" << std::endl;
+    }
+
     struct sigevent sev;
     sev.sigev_notify = SIGEV_THREAD;
     sev.sigev_notify_function = recvBoxOnData;
@@ -56,6 +64,7 @@ int main(int argc, char *argv[])
     uint32_t y_dir = 50;
     while (okay)
     {
+        sleep(5);
     	WMessage msgOut;
     	if (systemType == eSystemType::CONTROLLER)
     	{
@@ -70,6 +79,5 @@ int main(int argc, char *argv[])
 
     	okay = okay && mq_send(sendBox, (char *) &msgOut, sizeof(msgOut), 1) == OK;
         logger.logEvent(eLevels::INFO, "Placed something in sendBox. okay: %d", okay);
-        sleep(5);
     }
 }
