@@ -8,6 +8,10 @@
 #include <errno.h>
 #include <stdio.h>
 
+#define QUEUE_PERMISSIONS 0660
+#define MAX_MESSAGES 10
+#define MAX_MSG_SIZE 256
+
 extern int errno;
 int errnum;
 
@@ -46,10 +50,15 @@ int main(int argc, char *argv[])
     okay = okay && logger.setLogfile("Logs/CommThreadTest.log");
 
     mqd_t sendBox, recvBox;
+    struct mq_attr attr;
+    attr.mq_flags = 0;
+    attr.mq_maxmsg = MAX_MESSAGES;
+    attr.mq_msgsize = MAX_MSG_SIZE;
+    attr.mq_curmsgs = 0;
     // mailbox of messages to be sent over bluetooth
-    sendBox = mq_open("/sendBox", O_RDWR, 0, 0);
+    sendBox = mq_open("/sendBox", O_WRONLY, QUEUE_PERMISSIONS, attr);
     // mailbox of messges received over bluetooth
-    recvBox = mq_open("/recvBox", O_RDWR, 0, 0);
+    recvBox = mq_open("/recvBox", O_RDONLY, QUEUE_PERMISSIONS, attr);
 
     if (sendBox == ERROR)
     {
