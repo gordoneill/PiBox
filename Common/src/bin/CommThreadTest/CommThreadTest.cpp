@@ -29,7 +29,8 @@ static void recvBoxOnData(union sigval sv)
         mq_receive(recvBox, (char *) &payloadIn, sizeof(payloadIn), NULL);
         if (errno != EAGAIN)
         {
-            sendQueue.push(payloadIn);
+            //sendQueue.push(payloadIn);
+            std::cout << "Test: got a rx msg" << std::endl;
         }
     }
 

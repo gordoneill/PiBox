@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
     }
 
     WPacket payload;
-    WMsg msgIn;
+    WMessage msgIn;
     while(okay)
     {
         // if (connection.isDataAvailable()) // if data is coming in over bluetooth
