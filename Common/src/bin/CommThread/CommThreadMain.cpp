@@ -18,12 +18,11 @@ std::queue<WMessage> sendQueue;
 static void sendBoxOnData(union sigval sv)
 {
     std::cout << "something is sending!" << std::endl;
-    struct mq_attr attr;
-    ssize_t nr;
     WMessage payloadIn;
     mqd_t sendBox = *((mqd_t *) sv.sival_ptr);
     mq_receive(sendBox, (char *) &payloadIn, sizeof(payloadIn), NULL);
     sendQueue.push(payloadIn);
+    exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -53,10 +52,13 @@ int main(int argc, char *argv[])
     }
 
     mqd_t sendBox, recvBox;
+    mq_attr attr;
+    attr.mq_msgsize = sizeof(WPacket);
+    attr.mq_maxmsg = 1;
     // mailbox of messages to be sent over bluetooth
-    sendBox = mq_open("/sendBox", O_RDONLY|O_CREAT|O_EXCL, 0666, 0);
+    sendBox = mq_open("/sendBox", O_RDONLY|O_CREAT|O_EXCL, 0666, attr);
     // mailbox to put messges in received over bluetooth
-    recvBox = mq_open("/recvBox", O_RDWR|O_CREAT|O_EXCL, 0666, 0);
+    recvBox = mq_open("/recvBox", O_RDWR|O_CREAT|O_EXCL, 0666, attr);
 
     if (sendBox == ERROR || recvBox == ERROR)
     {
@@ -70,7 +72,13 @@ int main(int argc, char *argv[])
     sev.sigev_notify_function = sendBoxOnData;
     sev.sigev_notify_attributes = NULL;
     sev.sigev_value.sival_ptr = &sendBox;
-    mq_notify(sendBox, &sev);
+    
+    if (mq_notify(sendBox, &sev) != OK)
+    {
+        okay = false;
+        logger.logEvent(eLevels::FATAL, "mq_notify failed!");
+        std::cerr << "mq_notify failed!" << std::endl;
+    }
 
     while(okay)
     {
