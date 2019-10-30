@@ -2,7 +2,7 @@
 # File Name: 	Makefile
 # Purpose: 		Mid level makefile, propogates commands down
 
-SUB = CommThread 
+SUB = CommThread TestCommThread
 
 it clean install depend:
 	-X=`pwd`; \

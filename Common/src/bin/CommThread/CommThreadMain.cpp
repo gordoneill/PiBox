@@ -17,6 +17,7 @@ std::queue<WMessage> sendQueue;
 
 static void sendBoxOnData(union sigval sv)
 {
+    logger.logEvent(eLevels::INFO, "sendBoxOnData called");
     struct mq_attr attr;
     ssize_t nr;
     WMessage payloadIn;
@@ -39,7 +40,7 @@ int main(int argc, char *argv[])
     }
 
     LogMgr logger;
-    okay = okay && logger.setLogfile("CommunicationLog.log") == OK;
+    okay = okay && logger.setLogfile("CommunicationLog.log");
     Bluetooth connection(logger);
     switch(systemType)
     {

@@ -22,13 +22,14 @@ LogMgr::~LogMgr()
  *  @param l   Severity level of log
  *  @param fmt Format of the log message
  *  @param ... Additional arguments (i.e. message string pointer)
- *  @return    OK (0) if write was successful or ERRROR (-1)
+ *  @return    bool true if successful, false otherwise
  */
-int LogMgr::logEvent(eLevels l, const char *fmt, ...)
+bool LogMgr::logEvent(eLevels l, const char *fmt, ...)
 {
+	bool okay = true;
 	if (fid_ == ERROR)
 	{
-		setLogfile("logfile");
+		okay = okay && setLogfile("logfile");
 	}
 	if (fid_ != ERROR)
 	{
@@ -52,7 +53,7 @@ int LogMgr::logEvent(eLevels l, const char *fmt, ...)
 			log += "FATAL:";
 			break;
 		  default:
-			return ERROR;
+			okay = false;
 			break;
 		}
 
@@ -63,7 +64,7 @@ int LogMgr::logEvent(eLevels l, const char *fmt, ...)
 
 		if(vsprintf(tmpString, fmt, args) < OK)
 		{
-			return ERROR;
+			okay = false;
 		}
 		else
 		{
@@ -72,50 +73,46 @@ int LogMgr::logEvent(eLevels l, const char *fmt, ...)
 
 		log += "\n";
 
-		if (write(fid_, log.c_str(), log.length()) != (int) log.length())
-		{
-			return ERROR;
-		}
-		else
-		{
-			return OK;
-		}
+		okay = okay && (write(fid_, log.c_str(), log.length()) == (int) log.length());
 	}
 	else
 	{
-		return ERROR;
+		okay = false;
 	}
-	return OK;
+
+	return okay;
 }
 
 /*  @brief              Opens and sets new log file
  *  @param logfile_name Character pointer of new log file name
- *  @return             OK (0) if open was successful or ERRROR (-1)
+ *  @return             bool true if successful, false otherwise
  */
-int LogMgr::setLogfile(const char *logfile_name)
+bool LogMgr::setLogfile(const char *logfile_name)
 {
+	bool okay = true;
 	int tmpFid = open(logfile_name, O_APPEND|O_WRONLY|O_SYNC|O_CREAT, FULL_PERMISSION);
 	if (tmpFid != ERROR)
 	{
         closeLogfile();
 		fid_ = tmpFid;
-		return OK;
 	}
 	else
     {
         std::string buffer;
         buffer = "System call 'open' returned an error value of " + std::to_string(tmpFid);
         perror(buffer.c_str());
-		return ERROR;
+		okay = false;
 	}
+	return okay;
 }
 
 /*  @brief  Closes an open file descriptor
  *  @param  none
- *  @return void
+ *  @return bool true if successful, false otherwise
  */
-void LogMgr::closeLogfile()
+bool LogMgr::closeLogfile()
 {
+	bool okay = true;
 	if (fid_ != ERROR)
 	{
 		int retval = 0;
@@ -129,6 +126,8 @@ void LogMgr::closeLogfile()
 			std::string buffer;
 			buffer = "System call 'close' returned an error value of " + std::to_string(retval);
 			perror(buffer.c_str());
+			okay = false;
 		}
 	}
+	return okay;
 }

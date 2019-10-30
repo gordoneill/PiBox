@@ -35,21 +35,21 @@ public:
 	 *  @param l   Severity level of log
 	 *  @param fmt Format of the log message
 	 *  @param ... Additional arguments (i.e. message string pointer)
-	 *  @return    OK (0) if write was successful or ERRROR (-1)
+	 *  @return    bool true if successful, false otherwise
 	 */
-	int logEvent (eLevels l, const char *fmt, ...);
+	bool logEvent (eLevels l, const char *fmt, ...);
 
 	/*  @brief              Opens and sets new log file
 	 *  @param logfile_name Character pointer of new log file name
-	 *  @return             OK (0) if open was successful or ERRROR (-1)
+	 *  @return             bool true if successful, false otherwise
 	 */
-	int setLogfile (const char *logfile_name);
+	bool setLogfile (const char *logfile_name);
 
 	/*  @brief  Closes an open file descriptor
 	 *  @param  none
-	 *  @return void
+	 *  @return bool true if successful, false otherwise
 	 */
-	void closeLogfile (void);
+	bool closeLogfile (void);
 
 private:
 	int fid_;

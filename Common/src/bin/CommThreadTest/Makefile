@@ -1,17 +1,17 @@
 # Name:       Gordon O'Neill
 # File Name:  Makefile
-# Purpose:    Base level makefile, creates executable for CommThread
+# Purpose:    Base level makefile, creates executable for CommThreadTest
 
 PROJECT_ROOT = ../../..
 LIBDIR = $(PROJECT_ROOT)/lib/
 BINDIR = $(PROJECT_ROOT)/bin/
 INCLDIR = $(PROJECT_ROOT)/include/
 
-SRCS = CommThreadMain.cpp
-LIBS = $(LIBDIR)/libLogMgr.a $(LIBDIR)/libBluetoothIF.a $(LIBDIR)/libEncDec.a
+SRCS = CommThreadTest.cpp
+LIBS = $(LIBDIR)/libLogMgr.a $(LIBDIR)/libEncDec.a
 OBJS = $(SRCS:.cpp=.o)
-PROJECT = CommThread
-FLAGS = -I$(INCLDIR) -lrt -lbluetooth
+PROJECT = CommThreadTest
+FLAGS = -I$(INCLDIR) -lrt
 CC = g++ $(FLAGS)
 
 #Suffix Rule
