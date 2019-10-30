@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     }
 
     LogMgr logger;
-    okay = okay && logger.setLogfile("Logs/CommunicationLog.log");
+    okay = okay && logger.setLogfile("Logs/CommThread.log");
     Bluetooth connection(logger);
     switch(systemType)
     {
@@ -66,18 +66,19 @@ int main(int argc, char *argv[])
 
     while(okay)
     {
-        if (connection.isDataAvailable()) // if data is coming in over bluetooth
-        {
-            int bytesRead = 0;
-            WPacket payload;
-            okay = okay && connection.receive(bytesRead, (char *) &payload);
-            WMessage msgIn = RxWMsg(payload);
-            mq_send(recvBox, (char *) &msgIn, sizeof(msgIn), 1);
-        }
+        // if (connection.isDataAvailable()) // if data is coming in over bluetooth
+        // {
+        //     int bytesRead = 0;
+        //     WPacket payload;
+        //     okay = okay && connection.receive(bytesRead, (char *) &payload);
+        //     WMessage msgIn = RxWMsg(payload);
+        //     mq_send(recvBox, (char *) &msgIn, sizeof(msgIn), 1);
+        // }
         if (!sendQueue.empty()) // if data needs to be sent over bluetooth
         {
             WPacket payload = TxWMsg(sendQueue.front());
-            okay = okay && connection.send(sizeof(payload), (char *) &payload);
+            //okay = okay && connection.send(sizeof(payload), (char *) &payload);
+            std::cout << "send loop!" << std::endl;
             if (okay)
             {
                 sendQueue.pop();
