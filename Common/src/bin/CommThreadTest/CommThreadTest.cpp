@@ -17,10 +17,11 @@ static void recvBoxOnData(union sigval sv)
     ssize_t nr;
     WMessage payloadIn;
     mqd_t recvBox = *((mqd_t *) sv.sival_ptr);
-    mq_receive(recvBox, (char *) &payloadIn, sizeof(payloadIn), NULL);
+    mq_receive(recvBox, (char *) &payloadIn, 8192, NULL);
     std::cout << payloadIn.type << std::endl;
 	std::cout << payloadIn.x_dir << std::endl;
 	std::cout << payloadIn.y_dir << std::endl;
+    exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -39,15 +40,17 @@ int main(int argc, char *argv[])
     LogMgr logger;
     okay = okay && logger.setLogfile("Logs/CommThreadTest.log");
 
-    sleep(5); // time for mailboxes to be setup
+    sleep(1); // time for mailboxes to be setup
     mqd_t sendBox, recvBox;
     // mailbox of messages to be sent over bluetooth
-    sendBox = mq_open("/sendBox", O_WRONLY);
+    sendBox = mq_open("/sendBox", O_RDWR|O_CREAT, 0666, 0);
     // mailbox of messges received over bluetooth
-    recvBox = mq_open("/recvBox", O_RDONLY);
+    recvBox = mq_open("/recvBox", O_RDWR|O_CREAT, 0666, 0);
 
     if (sendBox == ERROR || recvBox == ERROR)
     {
+        mq_unlink("/sendBox");
+        mq_unlink("/recvBox");
         okay = false;
         logger.logEvent(eLevels::FATAL, "sendBox or recvBox opening failed!");
         std::cerr << "sendBox or recvBox opening failed!" << std::endl;
@@ -58,13 +61,18 @@ int main(int argc, char *argv[])
     sev.sigev_notify_function = recvBoxOnData;
     sev.sigev_notify_attributes = NULL;
     sev.sigev_value.sival_ptr = &recvBox;
-    mq_notify(recvBox, &sev);
+
+    if (mq_notify(recvBox, &sev) != OK)
+    {
+        okay = false;
+        logger.logEvent(eLevels::FATAL, "mq_notify failed!");
+        std::cerr << "mq_notify failed!" << std::endl;
+    }
     
     uint32_t x_dir = 0;
     uint32_t y_dir = 50;
     while (okay)
     {
-        sleep(5);
     	WMessage msgOut;
     	if (systemType == eSystemType::CONTROLLER)
     	{
@@ -79,6 +87,7 @@ int main(int argc, char *argv[])
 
     	okay = okay && mq_send(sendBox, (char *) &msgOut, sizeof(msgOut), 1) == OK;
         logger.logEvent(eLevels::INFO, "Placed something in sendBox. okay: %d", okay);
+        sleep(1);
     }
 
     mq_unlink("/sendBox");
