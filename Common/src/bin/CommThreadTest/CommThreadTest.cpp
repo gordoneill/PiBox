@@ -19,19 +19,6 @@ enum eSystemType {
     CONTROLLER
 };
 
-static void recvBoxOnData(union sigval sv)
-{
-    struct mq_attr attr;
-    ssize_t nr;
-    WMessage payloadIn;
-    mqd_t recvBox = *((mqd_t *) sv.sival_ptr);
-    mq_receive(recvBox, (char *) &payloadIn, 8192, NULL);
-    std::cout << payloadIn.type << std::endl;
-    std::cout << payloadIn.x_dir << std::endl;
-    std::cout << payloadIn.y_dir << std::endl;
-    exit(EXIT_SUCCESS);
-}
-
 int main(int argc, char *argv[])
 {
     bool okay = true;
@@ -55,9 +42,9 @@ int main(int argc, char *argv[])
     attr.mq_msgsize = MAX_MQ_MSG_SIZE;
     attr.mq_curmsgs = 0;
     // mailbox of messages to be sent over bluetooth
-    sendBox = mq_open("/sendBox", O_WRONLY, QUEUE_PERMISSIONS, attr);
+    sendBox = mq_open("/sendBox", O_RDWR, QUEUE_PERMISSIONS, attr);
     // mailbox of messges received over bluetooth
-    recvBox = mq_open("/recvBox", O_RDONLY, QUEUE_PERMISSIONS, attr);
+    recvBox = mq_open("/recvBox", O_RDWR, QUEUE_PERMISSIONS, attr);
 
     if (sendBox == ERROR)
     {
@@ -72,23 +59,6 @@ int main(int argc, char *argv[])
         okay = false;
         logger.logEvent(eLevels::FATAL, "recvBox opening failed!");
         std::cerr << "recvBox opening failed!" << std::endl;
-    }
-
-    struct sigevent sev;
-    sev.sigev_notify = SIGEV_THREAD;
-    sev.sigev_notify_function = recvBoxOnData;
-    sev.sigev_notify_attributes = NULL;
-    sev.sigev_value.sival_ptr = &recvBox;
-    
-    if (mq_notify(recvBox, &sev) != OK)
-    {
-        okay = false;
-        logger.logEvent(eLevels::FATAL, "mq_notify failed!");
-        std::cerr << "mq_notify failed!" << std::endl;
-        errnum = errno;
-        fprintf(stderr, "Value of errno: %d\n", errno);
-        perror("Error printed by perror");
-        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
     }
     
     uint32_t x_dir = 0;
