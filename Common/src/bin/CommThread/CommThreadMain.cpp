@@ -19,8 +19,6 @@ enum eSystemType {
 
 std::queue<WMessage> sendQueue;
 
-bool registerMsgInterrupt(mqd_t * messageQueue);
-
 static void sendBoxOnData(union sigval sv)
 {
     std::cout << "something is sending!" << std::endl;
@@ -28,7 +26,6 @@ static void sendBoxOnData(union sigval sv)
     mqd_t sendBox = *((mqd_t *) sv.sival_ptr);
     mq_receive(sendBox, (char *) &payloadIn, 8192, NULL);
     sendQueue.push(payloadIn);
-    registerMsgInterrupt(&sendBox);
     exit(EXIT_SUCCESS);
 }
 
@@ -84,13 +81,21 @@ int main(int argc, char *argv[])
         std::cerr << "recvBox opening failed!" << std::endl;
     }
 
-    okay = okay && registerMsgInterrupt(&sendBox);
-
-    if (!okay)
+    struct sigevent sev;
+    sev.sigev_notify = SIGEV_THREAD;
+    sev.sigev_notify_function = sendBoxOnData;
+    sev.sigev_notify_attributes = NULL;
+    sev.sigev_value.sival_ptr = &sendBox;
+    
+    if (mq_notify(sendBox, &sev) != OK)
     {
         okay = false;
         logger.logEvent(eLevels::FATAL, "mq_notify failed!");
         std::cerr << "mq_notify failed!" << std::endl;
+        errnum = errno;
+        fprintf(stderr, "Value of errno: %d\n", errno);
+        perror("Error printed by perror");
+        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
     }
 
     while(okay)
@@ -124,14 +129,4 @@ int main(int argc, char *argv[])
     mq_close(recvBox);
 
     return okay;
-}
-
-bool registerMsgInterrupt(mqd_t * messageQueue)
-{
-    struct sigevent sev;
-    sev.sigev_notify = SIGEV_THREAD;
-    sev.sigev_notify_function = sendBoxOnData;
-    sev.sigev_notify_attributes = NULL;
-    sev.sigev_value.sival_ptr = &messageQueue;
-    return (mq_notify(*messageQueue, &sev) == OK);
 }
