@@ -17,6 +17,7 @@ std::queue<WMessage> sendQueue;
 
 static void sendBoxOnData(union sigval sv)
 {
+    std::cout << "something is sending!" << std::endl;
     struct mq_attr attr;
     ssize_t nr;
     WMessage payloadIn;
@@ -44,10 +45,10 @@ int main(int argc, char *argv[])
     switch(systemType)
     {
         case CONTROLLER:
-            okay = okay && connection.connectToConsole();
+            //okay = okay && connection.connectToConsole();
             break;
         case CONSOLE:
-            okay = okay && connection.connectToController();
+            //okay = okay && connection.connectToController();
             break;
     }
 

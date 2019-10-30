@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
     	}
 
     	okay = okay && mq_send(sendBox, (char *) &msgOut, sizeof(msgOut), 1) == OK;
-	sleep(5);
+        logger.logEvent(eLevels::INFO, "Placed something in sendBox. okay: %d", okay);
+        sleep(5);
     }
 }
