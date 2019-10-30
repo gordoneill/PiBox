@@ -132,6 +132,7 @@ int main(int argc, char *argv[])
         // }
         if (!sendQueue.empty()) // if data needs to be sent over bluetooth
         {
+            mq_notify(sendBox, &sev);
             WPacket payload = TxWMsg(sendQueue.front());
             //okay = okay && connection.send(sizeof(payload), (char *) &payload);
             std::cout << "send loop!" << std::endl;
