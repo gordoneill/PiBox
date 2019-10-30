@@ -24,7 +24,6 @@ std::queue<WMessage> sendQueue;
 
 static void sendBoxOnData(union sigval sv)
 {
-    std::cout << "something is sending!" << std::endl;
     WMessage payloadIn;
     mqd_t sendBox = *((mqd_t *) sv.sival_ptr);
 
@@ -36,7 +35,7 @@ static void sendBoxOnData(union sigval sv)
             sendQueue.push(payloadIn);
         }
     }
-    
+
     exit(EXIT_SUCCESS);
 }
 
@@ -122,9 +121,9 @@ int main(int argc, char *argv[])
         if (!sendQueue.empty()) // if data needs to be sent over bluetooth
         {
             mq_notify(sendBox, &sev);
-            WPacket payload = TxWMsg(sendQueue.front());
+            //WPacket payload = TxWMsg(sendQueue.front());
             //okay = okay && connection.send(sizeof(payload), (char *) &payload);
-            std::cout << "send loop!" << std::endl;
+            logger.logEvent(eLevels::INFO, "send loop");
             if (okay)
             {
                 sendQueue.pop();
