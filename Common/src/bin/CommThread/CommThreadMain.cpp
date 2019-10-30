@@ -20,6 +20,41 @@ enum eSystemType {
     CONTROLLER
 };
 
+std::queue sendQueue;
+
+static void sendBoxOnData(union sigval sv)
+{
+    WMessage payloadIn;
+    mqd_t sendBox = *((mqd_t *) sv.sival_ptr);
+
+    while (errno != EAGAIN)
+    {
+        mq_receive(sendBox, (char *) &payloadIn, sizeof(payloadIn), NULL);
+        if (errno != EAGAIN)
+        {
+            sendQueue.push(payloadIn);
+            std::cout << "Comm: got a msg to send" << std::endl;
+        }
+    }
+
+    struct sigevent sev;
+    sev.sigev_notify = SIGEV_THREAD;
+    sev.sigev_notify_function = sendBoxOnData;
+    sev.sigev_notify_attributes = NULL;
+    sev.sigev_value.sival_ptr = &sendBox;
+    
+    if (mq_notify(sendBox, &sev) != OK)
+    {
+        std::cerr << "mq_notify failed!" << std::endl;
+        errnum = errno;
+        fprintf(stderr, "Value of errno: %d\n", errno);
+        perror("Error printed by perror");
+        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
+    }
+
+    exit(EXIT_SUCCESS);
+}
+
 int main(int argc, char *argv[])
 {
     bool okay = true;
@@ -73,6 +108,21 @@ int main(int argc, char *argv[])
         std::cerr << "recvBox opening failed!" << std::endl;
     }
 
+    struct sigevent sev;
+    sev.sigev_notify = SIGEV_THREAD;
+    sev.sigev_notify_function = sendBoxOnData;
+    sev.sigev_notify_attributes = NULL;
+    sev.sigev_value.sival_ptr = &sendBox;
+    
+    if (mq_notify(sendBox, &sev) != OK)
+    {
+        std::cerr << "mq_notify failed!" << std::endl;
+        errnum = errno;
+        fprintf(stderr, "Value of errno: %d\n", errno);
+        perror("Error printed by perror");
+        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
+    }
+
     WPacket payload;
     WMessage msgIn;
     while(okay)
@@ -85,11 +135,13 @@ int main(int argc, char *argv[])
         //     WMessage msgIn = RxWMsg(payload);
         //     mq_send(recvBox, (char *) &msgIn, sizeof(msgIn), 1);
         // }
-        if (mq_receive(sendBox, (char *) &msgIn, sizeof(msgIn), NULL) > 0)
+        if (!sendQueue.empty())
         {
+            msgIn = sendQueue.front();
             WPacket payload = TxWMsg(msgIn);
             std::cout << "received message" << std::endl;
             logger.logEvent(eLevels::INFO, "received message");
+            sendQueue.pop();
             //okay = okay && connection.send(sizeof(payload), (char *) &payload);
         }
     }
