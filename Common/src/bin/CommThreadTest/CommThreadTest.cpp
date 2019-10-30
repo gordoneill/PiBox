@@ -11,6 +11,9 @@
 #define MAX_MESSAGES 10
 #define MAX_MQ_MSG_SIZE 256
 
+extern int errno;
+int errnum;
+
 enum eSystemType {
     CONSOLE,
     CONTROLLER
@@ -73,11 +76,11 @@ int main(int argc, char *argv[])
 
     struct sigevent sev;
     sev.sigev_notify = SIGEV_THREAD;
-    sev.sigev_notify_function = sendBoxOnData;
+    sev.sigev_notify_function = recvBoxOnData;
     sev.sigev_notify_attributes = NULL;
-    sev.sigev_value.sival_ptr = &sendBox;
+    sev.sigev_value.sival_ptr = &recvBox;
     
-    if (mq_notify(sendBox, &sev) != OK)
+    if (mq_notify(recvBox, &sev) != OK)
     {
         okay = false;
         logger.logEvent(eLevels::FATAL, "mq_notify failed!");

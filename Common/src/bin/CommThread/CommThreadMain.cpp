@@ -12,6 +12,9 @@
 #define MAX_MESSAGES 10
 #define MAX_MQ_MSG_SIZE 256
 
+extern int errno;
+int errnum;
+
 enum eSystemType {
     CONSOLE,
     CONTROLLER
