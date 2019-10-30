@@ -19,7 +19,7 @@ enum eSystemType {
 
 std::queue<WMessage> sendQueue;
 
-bool registerMsgInterrupt(mqd_t & messageQueue);
+bool registerMsgInterrupt(mqd_t * messageQueue);
 
 static void sendBoxOnData(union sigval sv)
 {
@@ -28,7 +28,7 @@ static void sendBoxOnData(union sigval sv)
     mqd_t sendBox = *((mqd_t *) sv.sival_ptr);
     mq_receive(sendBox, (char *) &payloadIn, 8192, NULL);
     sendQueue.push(payloadIn);
-    registerMsgInterrupt(sendBox);
+    registerMsgInterrupt(&sendBox);
     exit(EXIT_SUCCESS);
 }
 
@@ -65,9 +65,9 @@ int main(int argc, char *argv[])
     attr.mq_msgsize = MAX_MQ_MSG_SIZE;
     attr.mq_curmsgs = 0;
     // mailbox of messages to be sent over bluetooth
-    sendBox = mq_open("/sendBox", O_RDWR|O_CREAT|O_EXCL, QUEUE_PERMISSIONS, attr);
+    sendBox = mq_open("/sendBox", O_RDONLY|O_CREAT|O_EXCL, QUEUE_PERMISSIONS, attr);
     // mailbox to put messges in received over bluetooth
-    recvBox = mq_open("/recvBox", O_RDWR|O_CREAT|O_EXCL, QUEUE_PERMISSIONS, attr);
+    recvBox = mq_open("/recvBox", O_WRONLY|O_CREAT|O_EXCL, QUEUE_PERMISSIONS, attr);
 
     if (sendBox == ERROR)
     {
@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
         std::cerr << "recvBox opening failed!" << std::endl;
     }
 
-    okay = okay && registerMsgInterrupt(recvBox);
+    okay = okay && registerMsgInterrupt(&sendBox);
 
     if (!okay)
     {
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
     return okay;
 }
 
-bool registerMsgInterrupt(mqd_t & messageQueue)
+bool registerMsgInterrupt(mqd_t * messageQueue)
 {
     struct sigevent sev;
     sev.sigev_notify = SIGEV_THREAD;
