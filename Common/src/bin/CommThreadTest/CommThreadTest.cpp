@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 extern int errno;
+int errnum;
 
 enum eSystemType {
     CONSOLE,
@@ -50,13 +51,29 @@ int main(int argc, char *argv[])
     // mailbox of messges received over bluetooth
     recvBox = mq_open("/recvBox", O_RDWR, 0, 0);
 
-    if (sendBox == ERROR || recvBox == ERROR)
+    if (sendBox == ERROR)
     {
         mq_unlink("/sendBox");
+        okay = false;
+        logger.logEvent(eLevels::FATAL, "sendBox opening failed!");
+        std::cerr << "sendBox opening failed!" << std::endl;
+
+        errnum = errno;
+        fprintf(stderr, "Value of errno: %d\n", errno);
+        perror("Error printed by perror");
+        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
+    }
+    if (recvBox == ERROR)
+    {
         mq_unlink("/recvBox");
         okay = false;
-        logger.logEvent(eLevels::FATAL, "sendBox or recvBox opening failed!");
-        std::cerr << "sendBox or recvBox opening failed!" << std::endl;
+        logger.logEvent(eLevels::FATAL, "recvBox opening failed!");
+        std::cerr << "recvBox opening failed!" << std::endl;
+
+        errnum = errno;
+        fprintf(stderr, "Value of errno: %d\n", errno);
+        perror("Error printed by perror");
+        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
     }
 
     struct sigevent sev;
@@ -70,6 +87,11 @@ int main(int argc, char *argv[])
         okay = false;
         logger.logEvent(eLevels::FATAL, "mq_notify failed!");
         std::cerr << "mq_notify failed!" << std::endl;
+
+        errnum = errno;
+        fprintf(stderr, "Value of errno: %d\n", errno);
+        perror("Error printed by perror");
+        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
     }
     
     uint32_t x_dir = 0;
@@ -90,7 +112,7 @@ int main(int argc, char *argv[])
 
     	okay = okay && mq_send(sendBox, (char *) &msgOut, sizeof(msgOut), 1) == OK;
         logger.logEvent(eLevels::INFO, "Placed something in sendBox. okay: %d", okay);
-        int errnum;
+
         if (!okay)
         {
           errnum = errno;

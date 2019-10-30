@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include <signal.h>
 
+extern int errno;
+int errnum;
+
 enum eSystemType {
     CONSOLE,
     CONTROLLER
@@ -57,13 +60,29 @@ int main(int argc, char *argv[])
     // mailbox to put messges in received over bluetooth
     recvBox = mq_open("/recvBox", O_RDWR|O_CREAT|O_EXCL, 0666, 0);
 
-    if (sendBox == ERROR || recvBox == ERROR)
+    if (sendBox == ERROR)
     {
         mq_unlink("/sendBox");
+        okay = false;
+        logger.logEvent(eLevels::FATAL, "sendBox opening failed!");
+        std::cerr << "sendBox opening failed!" << std::endl;
+
+        errnum = errno;
+        fprintf(stderr, "Value of errno: %d\n", errno);
+        perror("Error printed by perror");
+        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
+    }
+    if (recvBox == ERROR)
+    {
         mq_unlink("/recvBox");
         okay = false;
-        logger.logEvent(eLevels::FATAL, "sendBox or recvBox opening failed!");
-        std::cerr << "sendBox or recvBox opening failed!" << std::endl;
+        logger.logEvent(eLevels::FATAL, "recvBox opening failed!");
+        std::cerr << "recvBox opening failed!" << std::endl;
+
+        errnum = errno;
+        fprintf(stderr, "Value of errno: %d\n", errno);
+        perror("Error printed by perror");
+        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
     }
 
     struct sigevent sev;
@@ -77,6 +96,11 @@ int main(int argc, char *argv[])
         okay = false;
         logger.logEvent(eLevels::FATAL, "mq_notify failed!");
         std::cerr << "mq_notify failed!" << std::endl;
+
+        errnum = errno;
+        fprintf(stderr, "Value of errno: %d\n", errno);
+        perror("Error printed by perror");
+        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
     }
 
     while(okay)
