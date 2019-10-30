@@ -68,5 +68,6 @@ int main(int argc, char *argv[])
     	}
 
     	okay = okay && mq_send(sendBox, (char *) &msgOut, sizeof(msgOut), 1) == OK;
+	sleep(5);
     }
 }
