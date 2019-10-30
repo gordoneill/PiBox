@@ -20,7 +20,7 @@ enum eSystemType {
     CONTROLLER
 };
 
-std::queue sendQueue;
+std::queue <WMessage> sendQueue;
 
 static void sendBoxOnData(union sigval sv)
 {
