@@ -17,7 +17,6 @@ std::queue<WMessage> sendQueue;
 
 static void sendBoxOnData(union sigval sv)
 {
-    logger.logEvent(eLevels::INFO, "sendBoxOnData called");
     struct mq_attr attr;
     ssize_t nr;
     WMessage payloadIn;

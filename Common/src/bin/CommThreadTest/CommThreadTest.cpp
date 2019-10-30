@@ -12,7 +12,6 @@ enum eSystemType {
 
 static void recvBoxOnData(union sigval sv)
 {
-    logger.logEvent(eLevels::INFO, "recvBoxOnData called");
     struct mq_attr attr;
     ssize_t nr;
     WMessage payloadIn;
