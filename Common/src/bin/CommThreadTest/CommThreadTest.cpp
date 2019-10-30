@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     }
 
     LogMgr logger;
-    okay = okay && logger.setLogfile("CommThreadTest.log");
+    okay = okay && logger.setLogfile("Logs/hreadTest.log");
 
     mqd_t sendBox, recvBox;
     // mailbox of messages to be sent over bluetooth

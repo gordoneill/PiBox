@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     }
 
     LogMgr logger;
-    okay = okay && logger.setLogfile("CommunicationLog.log");
+    okay = okay && logger.setLogfile("Logs/CommunicationLog.log");
     Bluetooth connection(logger);
     switch(systemType)
     {
