@@ -130,7 +130,7 @@ bool registerMsgInterrupt(mqd_t & messageQueue)
 {
     struct sigevent sev;
     sev.sigev_notify = SIGEV_THREAD;
-    sev.sigev_notify_function = recvBoxOnData;
+    sev.sigev_notify_function = sendBoxOnData;
     sev.sigev_notify_attributes = NULL;
     sev.sigev_value.sival_ptr = &messageQueue;
     return (mq_notify(messageQueue, &sev) == OK);
