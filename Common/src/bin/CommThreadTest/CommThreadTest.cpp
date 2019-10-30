@@ -1,4 +1,5 @@
 #include "WMsg_encoder.h"
+#include "LogMgr.h"
 #include <string>
 #include <iostream>
 #include <mqueue.h>
@@ -66,6 +67,6 @@ int main(int argc, char *argv[])
     		msgOut.type = eMsgTypes::STATUS;
     	}
 
-    	okay = okay && mq_send(sendBox, (char *) &msgIn, sizeof(msgIn), 1) == OK;
+    	okay = okay && mq_send(sendBox, (char *) &msgOut, sizeof(msgOut), 1) == OK;
     }
 }
