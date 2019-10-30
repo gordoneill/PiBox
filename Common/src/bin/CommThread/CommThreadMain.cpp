@@ -52,13 +52,10 @@ int main(int argc, char *argv[])
     }
 
     mqd_t sendBox, recvBox;
-    mq_attr attr;
-    attr.mq_msgsize = sizeof(WPacket);
-    attr.mq_maxmsg = 1;
     // mailbox of messages to be sent over bluetooth
-    sendBox = mq_open("/sendBox", O_RDONLY|O_CREAT|O_EXCL, 0666, attr);
+    sendBox = mq_open("/sendBox", O_RDONLY|O_CREAT|O_EXCL, 0666, NULL);
     // mailbox to put messges in received over bluetooth
-    recvBox = mq_open("/recvBox", O_RDWR|O_CREAT|O_EXCL, 0666, attr);
+    recvBox = mq_open("/recvBox", O_RDWR|O_CREAT|O_EXCL, 0666, NULL);
 
     if (sendBox == ERROR || recvBox == ERROR)
     {

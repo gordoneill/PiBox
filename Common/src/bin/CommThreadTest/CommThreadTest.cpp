@@ -42,9 +42,9 @@ int main(int argc, char *argv[])
     sleep(5); // time for mailboxes to be setup
     mqd_t sendBox, recvBox;
     // mailbox of messages to be sent over bluetooth
-    sendBox = mq_open("/sendBox", O_RDWR, 0, 0);
+    sendBox = mq_open("/sendBox", O_WRONLY);
     // mailbox of messges received over bluetooth
-    recvBox = mq_open("/recvBox", O_RDWR, 0, 0);
+    recvBox = mq_open("/recvBox", O_RDONLY);
 
     if (sendBox == ERROR || recvBox == ERROR)
     {
