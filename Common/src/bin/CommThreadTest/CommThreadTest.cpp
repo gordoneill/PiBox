@@ -19,6 +19,38 @@ enum eSystemType {
     CONTROLLER
 };
 
+static void recvBoxOnData(union sigval sv)
+{
+    WMessage payloadIn;
+    mqd_t recvBox = *((mqd_t *) sv.sival_ptr);
+
+    while (errno != EAGAIN)
+    {
+        mq_receive(recvBox, (char *) &payloadIn, sizeof(payloadIn), NULL);
+        if (errno != EAGAIN)
+        {
+            sendQueue.push(payloadIn);
+        }
+    }
+
+    struct sigevent sev;
+    sev.sigev_notify = SIGEV_THREAD;
+    sev.sigev_notify_function = recvBoxOnData;
+    sev.sigev_notify_attributes = NULL;
+    sev.sigev_value.sival_ptr = &recvBox;
+    
+    if (mq_notify(recvBox, &sev) != OK)
+    {
+        std::cerr << "mq_notify failed!" << std::endl;
+        errnum = errno;
+        fprintf(stderr, "Value of errno: %d\n", errno);
+        perror("Error printed by perror");
+        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
+    }
+
+    exit(EXIT_SUCCESS);
+}
+
 int main(int argc, char *argv[])
 {
     bool okay = true;
@@ -59,6 +91,23 @@ int main(int argc, char *argv[])
         okay = false;
         logger.logEvent(eLevels::FATAL, "recvBox opening failed!");
         std::cerr << "recvBox opening failed!" << std::endl;
+    }
+
+    struct sigevent sev;
+    sev.sigev_notify = SIGEV_THREAD;
+    sev.sigev_notify_function = recvBoxOnData;
+    sev.sigev_notify_attributes = NULL;
+    sev.sigev_value.sival_ptr = &recvBox;
+    
+    if (mq_notify(recvBox, &sev) != OK)
+    {
+        okay = false;
+        logger.logEvent(eLevels::FATAL, "mq_notify failed!");
+        std::cerr << "mq_notify failed!" << std::endl;
+        errnum = errno;
+        fprintf(stderr, "Value of errno: %d\n", errno);
+        perror("Error printed by perror");
+        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
     }
     
     uint32_t x_dir = 0;

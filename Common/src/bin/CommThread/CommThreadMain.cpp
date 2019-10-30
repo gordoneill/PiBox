@@ -20,25 +20,6 @@ enum eSystemType {
     CONTROLLER
 };
 
-std::queue<WMessage> sendQueue;
-
-static void sendBoxOnData(union sigval sv)
-{
-    WMessage payloadIn;
-    mqd_t sendBox = *((mqd_t *) sv.sival_ptr);
-
-    while (errno != EAGAIN)
-    {
-        mq_receive(sendBox, (char *) &payloadIn, 8192, NULL);
-        if (errno != EAGAIN)
-        {
-            sendQueue.push(payloadIn);
-        }
-    }
-
-    exit(EXIT_SUCCESS);
-}
-
 int main(int argc, char *argv[])
 {
     bool okay = true;
@@ -53,6 +34,7 @@ int main(int argc, char *argv[])
     }
 
     LogMgr logger;
+    system("mkdir Logs");
     okay = okay && logger.setLogfile("Logs/CommThread.log");
     Bluetooth connection(logger);
     switch(systemType)
@@ -91,23 +73,8 @@ int main(int argc, char *argv[])
         std::cerr << "recvBox opening failed!" << std::endl;
     }
 
-    struct sigevent sev;
-    sev.sigev_notify = SIGEV_THREAD;
-    sev.sigev_notify_function = sendBoxOnData;
-    sev.sigev_notify_attributes = NULL;
-    sev.sigev_value.sival_ptr = &sendBox;
-    
-    if (mq_notify(sendBox, &sev) != OK)
-    {
-        okay = false;
-        logger.logEvent(eLevels::FATAL, "mq_notify failed!");
-        std::cerr << "mq_notify failed!" << std::endl;
-        errnum = errno;
-        fprintf(stderr, "Value of errno: %d\n", errno);
-        perror("Error printed by perror");
-        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
-    }
-
+    WPacket payload;
+    WMsg msgIn;
     while(okay)
     {
         // if (connection.isDataAvailable()) // if data is coming in over bluetooth
@@ -118,16 +85,11 @@ int main(int argc, char *argv[])
         //     WMessage msgIn = RxWMsg(payload);
         //     mq_send(recvBox, (char *) &msgIn, sizeof(msgIn), 1);
         // }
-        if (!sendQueue.empty()) // if data needs to be sent over bluetooth
+        if (mq_receive(sendBox, (char *) &msgIn, sizeof(msgIn), NULL) > 0)
         {
-            mq_notify(sendBox, &sev);
-            //WPacket payload = TxWMsg(sendQueue.front());
+            WPacket payload = TxWMsg(msgIn);
+            std::cout << "Got Msg to send" << std::endl;
             //okay = okay && connection.send(sizeof(payload), (char *) &payload);
-            logger.logEvent(eLevels::INFO, "send loop");
-            if (okay)
-            {
-                sendQueue.pop();
-            }
         }
     }
 
