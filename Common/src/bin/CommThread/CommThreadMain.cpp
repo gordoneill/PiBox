@@ -19,6 +19,8 @@ enum eSystemType {
 
 std::queue<WMessage> sendQueue;
 
+bool registerMsgInterrupt(mqd_t & messageQueue);
+
 static void sendBoxOnData(union sigval sv)
 {
     std::cout << "something is sending!" << std::endl;
@@ -131,5 +133,5 @@ bool registerMsgInterrupt(mqd_t & messageQueue)
     sev.sigev_notify_function = recvBoxOnData;
     sev.sigev_notify_attributes = NULL;
     sev.sigev_value.sival_ptr = &messageQueue;
-    mq_notify(messageQueue, &sev);
+    return (mq_notify(messageQueue, &sev) == OK);
 }
