@@ -24,12 +24,13 @@ std::queue <WMessage> sendQueue;
 
 static void sendBoxOnData(union sigval sv)
 {
+    std::cout << "Comm: enter sendBoxOnData" << std::endl;
     WMessage payloadIn;
     mqd_t sendBox = *((mqd_t *) sv.sival_ptr);
 
     while (errno != EAGAIN)
     {
-        mq_receive(sendBox, (char *) &payloadIn, sizeof(payloadIn), NULL);
+        mq_receive(sendBox, (char *) &payloadIn, sizeof(payloadIn)+1, NULL);
         if (errno != EAGAIN)
         {
             sendQueue.push(payloadIn);
@@ -138,8 +139,8 @@ int main(int argc, char *argv[])
         if (!sendQueue.empty())
         {
             msgIn = sendQueue.front();
-            WPacket payload = TxWMsg(msgIn);
-            std::cout << "received message" << std::endl;
+            //WPacket payload = TxWMsg(msgIn);
+            printf("Msg received: %s", msgIn);
             logger.logEvent(eLevels::INFO, "received message");
             sendQueue.pop();
             //okay = okay && connection.send(sizeof(payload), (char *) &payload);
