@@ -46,8 +46,7 @@ static void sendBoxOnData(union sigval sv)
         return;
     }
 
-    //reinterpret_cast<WMessage *>(WMessage * )
-    msg.type = (uint32_t) Message[4];
+    msg.type = (eMsgTypes) Message[4];
     sendQueue.push(msg);
         
     if(mq_getattr(sendBox, &MQStat) == ERROR)
@@ -142,7 +141,7 @@ int main(int argc, char *argv[])
         if (!sendQueue.empty())
         {
             msgIn = sendQueue.front();
-            //WPacket payload = TxWMsg(msgIn);
+            WPacket payload = TxWMsg(msgIn);
             printf("Msg received, type: %d\n", msgIn.type);
             logger.logEvent(eLevels::INFO, "received message");
             sendQueue.pop();
