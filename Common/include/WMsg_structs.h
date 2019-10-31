@@ -61,20 +61,15 @@ std::string ToString(WMessage & msg)
 	ret += std::to_string(msg.btnState)+ ",";
 	ret += std::to_string(msg.battery);
 
+	ret = "hello";
+
 	return ret;
 }
 
 WMessage ToWMessage(std::string str)
 {
-	WMessage ret
+	WMessage ret;
 	return ret;
 }
-
-
-// void WMsgError()
-// {
-//     //set breakpoint here when debugging why Error_Handler was called
-//     while(1);
-// } 
 
 #endif

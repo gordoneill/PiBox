@@ -37,7 +37,7 @@ static void sendBoxOnData(union sigval sv)
         return;
     }
     printf("On Entering MQStat.mq_curmsgs: %ld\n",MQStat.mq_curmsgs);
-    ssize_t NoOfBytesRx = mq_receive(sendBox, Message, (MQStat.mq_msgsize), 0);
+    ssize_t NoOfBytesRx = mq_receive(sendBox, Message, (MQStat.mq_msgsize) , 0);
     
     if(NoOfBytesRx == ERROR)
     {
