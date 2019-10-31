@@ -128,9 +128,9 @@ int main(int argc, char *argv[])
     	// }
 
         std::string msgOut = "Hello";
-        char * msgOutC = msgOut.c_str();
+        //const char * msgOutC = msgOut.c_str();
 
-    	okay = okay && mq_send(sendBox, msgOutC, msgOut.length()+1, 1) == OK;
+    	okay = okay && mq_send(sendBox, msgOut.c_str(), msgOut.length()+1, 1) == OK;
         logger.logEvent(eLevels::INFO, "Placed something in sendBox. okay: %d", okay);
         sleep(1);
     }
