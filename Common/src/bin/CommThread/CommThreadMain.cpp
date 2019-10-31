@@ -25,7 +25,7 @@ enum eSystemType {
 
 std::queue <WMessage> sendQueue;
 mqd_t sendBox, recvBox; 
-char Message[100];
+char Message[MAX_MQ_MSG_SIZE+1];
 struct sigevent SIGNAL;
 
 static void sendBoxOnData(union sigval sv)
@@ -37,9 +37,9 @@ static void sendBoxOnData(union sigval sv)
         return;
     }
     printf("On Entering MQStat.mq_curmsgs: %ld\n",MQStat.mq_curmsgs);
-    ssize_t NoOfBytesRx = mq_receive(sendBox, Message, (MQStat.mq_msgsize) , 0);
+    ssize_t noOfBytesRx = mq_receive(sendBox, Message, MAX_MQ_MSG_SIZE+1 , 0);
     
-    if(NoOfBytesRx == ERROR)
+    if(noOfBytesRx == ERROR)
     {
         perror("mq_receive");
         return;
@@ -80,15 +80,22 @@ int main(int argc, char *argv[])
     system("mkdir Logs");
     okay = okay && logger.setLogfile("Logs/CommThread.log");
     Bluetooth connection(logger);
+
     switch(systemType)
     {
         case CONTROLLER:
             //okay = okay && connection.connectToConsole();
+            logger.logEvent(eLevels::INFO, "Controller CommThread Starting...");
+            std::cout << "Controller CommThread Starting..." << std::endl;
             break;
         case CONSOLE:
             //okay = okay && connection.connectToController();
+            logger.logEvent(eLevels::INFO, "Console CommThread Starting...");
+            std::cout << "Console CommThread Starting..." << std::endl;
             break;
     }
+
+    //_____________________________________________________________________________
 
     struct mq_attr attr;
     attr.mq_flags = 0;
@@ -125,6 +132,8 @@ int main(int argc, char *argv[])
         okay = false;
     }
 
+    //_____________________________________________________________________________
+
     WPacket payload;
     WMessage msgIn;
     while(okay)
@@ -147,6 +156,8 @@ int main(int argc, char *argv[])
             //okay = okay && connection.send(sizeof(payload), (char *) &payload);
         }
     }
+
+    //_____________________________________________________________________________
 
     logger.logEvent(eLevels::FATAL, "okay became false! Program terminating");
     std::cerr << "okay became false! Program terminating" << std::endl;

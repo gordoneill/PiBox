@@ -11,45 +11,49 @@
 #define MAX_MESSAGES 10
 #define MAX_MQ_MSG_SIZE 256
 
-extern int errno;
-int errnum;
-
 enum eSystemType {
     CONSOLE,
     CONTROLLER
 };
 
+extern int errno;
+int errnum;
+mqd_t sendBox, recvBox; 
+char Message[MAX_MQ_MSG_SIZE+1];
+struct sigevent SIGNAL;
+
 static void recvBoxOnData(union sigval sv)
 {
-    WMessage payloadIn;
-    mqd_t recvBox = *((mqd_t *) sv.sival_ptr);
-
-    while (errno != EAGAIN)
+    struct mq_attr MQStat;
+    if(mq_getattr(recvBox, &MQStat) == ERROR)
     {
-        mq_receive(recvBox, (char *) &payloadIn, sizeof(payloadIn), NULL);
-        if (errno != EAGAIN)
-        {
-            //sendQueue.push(payloadIn);
-            std::cout << "Test: got a rx msg" << std::endl;
-        }
+        perror("mq_getattr");
+        return;
     }
-
-    struct sigevent sev;
-    sev.sigev_notify = SIGEV_THREAD;
-    sev.sigev_notify_function = recvBoxOnData;
-    sev.sigev_notify_attributes = NULL;
-    sev.sigev_value.sival_ptr = &recvBox;
+    printf("On Entering MQStat.mq_curmsgs: %ld\n",MQStat.mq_curmsgs);
     
-    if (mq_notify(recvBox, &sev) != OK)
+    ssize_t noOfBytesRx = mq_receive(recvBox, Message, MAX_MQ_MSG_SIZE+1 , 0);
+
+    printf("Received: %s\n", Message);
+    
+    if(noOfBytesRx == ERROR)
     {
-        std::cerr << "mq_notify failed!" << std::endl;
-        errnum = errno;
-        fprintf(stderr, "Value of errno: %d\n", errno);
-        perror("Error printed by perror");
-        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
+        perror("mq_receive");
+        return;
+    }
+    if(mq_getattr(recvBox, &MQStat) == ERROR)
+    {
+        perror("mq_getattr");
+        return;
+    }
+    printf("On Exiting MQStat.mq_curmsgs: %ld\n",MQStat.mq_curmsgs);
+    if(mq_notify(recvBox, &SIGNAL) == ERROR)
+    {
+        perror("mq_notify");
+        return;
     }
 
-    exit(EXIT_SUCCESS);
+    return;
 }
 
 int main(int argc, char *argv[])
@@ -94,21 +98,14 @@ int main(int argc, char *argv[])
         std::cerr << "recvBox opening failed!" << std::endl;
     }
 
-    struct sigevent sev;
-    sev.sigev_notify = SIGEV_THREAD;
-    sev.sigev_notify_function = recvBoxOnData;
-    sev.sigev_notify_attributes = NULL;
-    sev.sigev_value.sival_ptr = &recvBox;
+    SIGNAL.sigev_notify = SIGEV_THREAD;
+    SIGNAL.sigev_notify_function = recvBoxOnData;
+    SIGNAL.sigev_notify_attributes = NULL;
     
-    if (mq_notify(recvBox, &sev) != OK)
+    if(mq_notify(recvBox, &SIGNAL) == ERROR)
     {
+        perror("mq_notify");
         okay = false;
-        logger.logEvent(eLevels::FATAL, "mq_notify failed!");
-        std::cerr << "mq_notify failed!" << std::endl;
-        errnum = errno;
-        fprintf(stderr, "Value of errno: %d\n", errno);
-        perror("Error printed by perror");
-        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
     }
     
     uint32_t x_dir = 0;
