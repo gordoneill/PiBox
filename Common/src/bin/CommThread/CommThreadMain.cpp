@@ -23,45 +23,41 @@ enum eSystemType {
     CONTROLLER
 };
 
-std::queue <std::string> sendQueue;
-mqd_t sendBox, recvBox;
-int ret;    
-char Message[100];
-ssize_t NoOfBytesRx;
-struct mq_attr MQStat;
-int quit;
+std::queue <WMessage> sendQueue;
+mqd_t sendBox, recvBox; 
+unsigned char Message[100];
 struct sigevent SIGNAL;
 
 static void sendBoxOnData(union sigval sv)
 {
-    ret = mq_getattr(sendBox, &MQStat);
-    if(ret == -1)
+    struct mq_attr MQStat;
+    if(mq_getattr(sendBox, &MQStat) == ERROR)
     {
         perror("mq_getattr");
         return;
     }
     printf("On Entering MQStat.mq_curmsgs: %ld\n",MQStat.mq_curmsgs);
-    NoOfBytesRx = mq_receive(sendBox, Message, (MQStat.mq_msgsize) , 0);
+    ssize_t NoOfBytesRx = mq_receive(sendBox, Message, (MQStat.mq_msgsize) , 0);
     
-    if(NoOfBytesRx == -1)
+    if(NoOfBytesRx == ERROR)
     {
         perror("mq_receive");
         return;
     }
+
+    WMessage msg;
+
+    //reinterpret_cast<WMessage *>(WMessage * )
     
-    printf("%s",Message);   
-    sendQueue.push(std::string(Message));
-    
+    sendQueue.push(msg);
         
-    ret = mq_getattr(sendBox, &MQStat);
-    if(ret == -1)
+    if(mq_getattr(sendBox, &MQStat) == ERROR)
     {
         perror("mq_getattr");
         return;
     }
     printf("On Exiting MQStat.mq_curmsgs: %ld\n",MQStat.mq_curmsgs);
-    ret = mq_notify(sendBox, &SIGNAL);
-    if(ret == -1)
+    if(mq_notify(sendBox, &SIGNAL) == ERROR)
     {
         perror("mq_notify");
         return;
@@ -126,15 +122,14 @@ int main(int argc, char *argv[])
     SIGNAL.sigev_notify_function = sendBoxOnData;
     SIGNAL.sigev_notify_attributes = NULL;
     
-    ret = mq_notify(sendBox, &SIGNAL);
-    if(ret == -1)
+    if(mq_notify(sendBox, &SIGNAL) == ERROR)
     {
         perror("mq_notify");
-        return -1;
+        okay = false;
     }
 
     WPacket payload;
-    std::string msgIn;
+    WMessage msgIn;
     while(okay)
     {
         // if (connection.isDataAvailable()) // if data is coming in over bluetooth
@@ -149,7 +144,7 @@ int main(int argc, char *argv[])
         {
             msgIn = sendQueue.front();
             //WPacket payload = TxWMsg(msgIn);
-            printf("Msg received: %s", msgIn);
+            printf("Msg received, type: %d\n", msgIn.type);
             logger.logEvent(eLevels::INFO, "received message");
             sendQueue.pop();
             //okay = okay && connection.send(sizeof(payload), (char *) &payload);
