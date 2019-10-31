@@ -115,19 +115,22 @@ int main(int argc, char *argv[])
     uint32_t y_dir = 50;
     while (okay)
     {
-    	WMessage msgOut;
-    	if (systemType == eSystemType::CONTROLLER)
-    	{
-    		msgOut.type = eMsgTypes::DIRECTION;
-    		msgOut.x_dir = x_dir++;
-    		msgOut.y_dir = y_dir++;
-    	}
-    	else
-    	{
-    		msgOut.type = eMsgTypes::STATUS;
-    	}
+    	// WMessage msgOut;
+    	// if (systemType == eSystemType::CONTROLLER)
+    	// {
+    	// 	msgOut.type = eMsgTypes::DIRECTION;
+    	// 	msgOut.x_dir = x_dir++;
+    	// 	msgOut.y_dir = y_dir++;
+    	// }
+    	// else
+    	// {
+    	// 	msgOut.type = eMsgTypes::STATUS;
+    	// }
 
-    	okay = okay && mq_send(sendBox, (char *) &msgOut, sizeof(msgOut), 1) == OK;
+        std::string msgOut = "Hello";
+        char * msgOutC = msgOut.c_str();
+
+    	okay = okay && mq_send(sendBox, msgOutC, msgOut.length()+1, 1) == OK;
         logger.logEvent(eLevels::INFO, "Placed something in sendBox. okay: %d", okay);
         sleep(1);
     }
