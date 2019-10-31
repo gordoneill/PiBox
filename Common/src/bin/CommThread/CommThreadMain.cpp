@@ -14,7 +14,6 @@ char recvQueueName[10] = "/recvBox";
 #define QUEUE_PERMISSIONS 0660
 #define MAX_MESSAGES 10
 #define MAX_MQ_MSG_SIZE 256
-#define MESSAGE_PRIO 1
 
 extern int errno;
 int errnum;
@@ -42,7 +41,7 @@ static void sendBoxOnData(union sigval sv)
         return;
     }
     printf("On Entering MQStat.mq_curmsgs: %ld\n",MQStat.mq_curmsgs);
-    NoOfBytesRx = mq_receive(sendBox, Message, (MQStat.mq_msgsize) , MESSAGE_PRIO);
+    NoOfBytesRx = mq_receive(sendBox, Message, (MQStat.mq_msgsize) , 0);
     
     if(NoOfBytesRx == -1)
     {
