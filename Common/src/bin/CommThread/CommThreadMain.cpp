@@ -13,7 +13,7 @@ char recvQueueName[10] = "/recvBox";
 
 #define QUEUE_PERMISSIONS 0660
 #define MAX_MESSAGES 10
-#define MAX_MQ_MSG_SIZE 256
+#define MAX_MQ_MSG_SIZE 512
 
 extern int errno;
 int errnum;
