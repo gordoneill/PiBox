@@ -25,7 +25,7 @@ enum eSystemType {
 
 std::queue <WMessage> sendQueue;
 mqd_t sendBox, recvBox; 
-unsigned char Message[100];
+char Message[100];
 struct sigevent SIGNAL;
 
 static void sendBoxOnData(union sigval sv)
