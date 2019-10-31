@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include <signal.h>
 
+char sendQueueName[10] = "/sendBox";
+char sendQueueName[10] = "/sendBox";
+
 #define QUEUE_PERMISSIONS 0660
 #define MAX_MESSAGES 10
 #define MAX_MQ_MSG_SIZE 256
@@ -20,40 +23,51 @@ enum eSystemType {
     CONTROLLER
 };
 
-std::queue <WMessage> sendQueue;
+std::queue <std::string> sendQueue;
+mqd_t sendBox, recvBox;
+int ret;    
+char Message[100];
+ssize_t NoOfBytesRx;
+struct mq_attr MQStat;
+int quit;
+struct sigevent SIGNAL;
 
 static void sendBoxOnData(union sigval sv)
 {
-    std::cout << "Comm: enter sendBoxOnData" << std::endl;
-    WMessage payloadIn;
-    mqd_t sendBox = *((mqd_t *) sv.sival_ptr);
-
-    while (errno != EAGAIN)
+    ret = mq_getattr(sendBox, &MQStat);
+    if(ret == -1)
     {
-        mq_receive(sendBox, (char *) &payloadIn, sizeof(payloadIn)+1, NULL);
-        if (errno != EAGAIN)
-        {
-            sendQueue.push(payloadIn);
-            std::cout << "Comm: got a msg to send" << std::endl;
-        }
+        perror("mq_getattr");
+        return;
     }
-
-    struct sigevent sev;
-    sev.sigev_notify = SIGEV_THREAD;
-    sev.sigev_notify_function = sendBoxOnData;
-    sev.sigev_notify_attributes = NULL;
-    sev.sigev_value.sival_ptr = &sendBox;
+    printf("On Entering MQStat.mq_curmsgs: %ld\n",MQStat.mq_curmsgs);
+    NoOfBytesRx = mq_receive(sendBox, Message, (MQStat.mq_msgsize) , MESSAGE_PRIO);
     
-    if (mq_notify(sendBox, &sev) != OK)
+    if(NoOfBytesRx == -1)
     {
-        std::cerr << "mq_notify failed!" << std::endl;
-        errnum = errno;
-        fprintf(stderr, "Value of errno: %d\n", errno);
-        perror("Error printed by perror");
-        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
+        perror("mq_receive");
+        return;
+    }
+    
+    printf("%s",Message);   
+    sendQueue.push(std::string(Message));
+    
+        
+    ret = mq_getattr(sendBox, &MQStat);
+    if(ret == -1)
+    {
+        perror("mq_getattr");
+        return;
+    }
+    printf("On Exiting MQStat.mq_curmsgs: %ld\n",MQStat.mq_curmsgs);
+    ret = mq_notify(sendBox, &SIGNAL);
+    if(ret == -1)
+    {
+        perror("mq_notify");
+        return;
     }
 
-    exit(EXIT_SUCCESS);
+    return;
 }
 
 int main(int argc, char *argv[])
@@ -83,7 +97,6 @@ int main(int argc, char *argv[])
             break;
     }
 
-    mqd_t sendBox, recvBox;
     struct mq_attr attr;
     attr.mq_flags = 0;
     attr.mq_maxmsg = MAX_MESSAGES;
@@ -109,19 +122,15 @@ int main(int argc, char *argv[])
         std::cerr << "recvBox opening failed!" << std::endl;
     }
 
-    struct sigevent sev;
-    sev.sigev_notify = SIGEV_THREAD;
-    sev.sigev_notify_function = sendBoxOnData;
-    sev.sigev_notify_attributes = NULL;
-    sev.sigev_value.sival_ptr = &sendBox;
+    SIGNAL.sigev_notify = SIGEV_THREAD;
+    SIGNAL.sigev_notify_function = sendBoxOnData;
+    SIGNAL.sigev_notify_attributes = NULL;
     
-    if (mq_notify(sendBox, &sev) != OK)
+    ret = mq_notify(sendBox, &SIGNAL);
+    if(ret == -1)
     {
-        std::cerr << "mq_notify failed!" << std::endl;
-        errnum = errno;
-        fprintf(stderr, "Value of errno: %d\n", errno);
-        perror("Error printed by perror");
-        fprintf(stderr, "Error opening file: %s\n", strerror( errnum ));
+        perror("mq_notify");
+        return -1;
     }
 
     WPacket payload;
