@@ -127,10 +127,8 @@ int main(int argc, char *argv[])
     		msgOut.type = eMsgTypes::STATUS;
     	}
 
-        //std::string msgOut = "Hello";
-        //const char * msgOutC = msgOut.c_str();
-
-    	okay = okay && mq_send(sendBox, (char *) &msgOut, sizeof(msgOut), 1) == OK;
+        std::string out = ToString(msgOut);
+    	okay = okay && mq_send(sendBox, out.c_str(), out.length()+1, 1) == OK;
         logger.logEvent(eLevels::INFO, "Placed something in sendBox. okay: %d", okay);
         sleep(1);
     }

@@ -31,14 +31,13 @@ struct sigevent SIGNAL;
 static void sendBoxOnData(union sigval sv)
 {
     struct mq_attr MQStat;
-    WMessage msg;
     if(mq_getattr(sendBox, &MQStat) == ERROR)
     {
         perror("mq_getattr");
         return;
     }
     printf("On Entering MQStat.mq_curmsgs: %ld\n",MQStat.mq_curmsgs);
-    ssize_t NoOfBytesRx = mq_receive(sendBox, Message, MQStat.mq_msgsize, 0);
+    ssize_t NoOfBytesRx = mq_receive(sendBox, Message, (MQStat.mq_msgsize), 0);
     
     if(NoOfBytesRx == ERROR)
     {
@@ -46,7 +45,7 @@ static void sendBoxOnData(union sigval sv)
         return;
     }
 
-    msg.type = (eMsgTypes) Message[4];
+    WMessage msg = ToWMessage(std::string(Message));
     sendQueue.push(msg);
         
     if(mq_getattr(sendBox, &MQStat) == ERROR)
