@@ -38,14 +38,14 @@ static void sendBoxOnData(union sigval sv)
         return;
     }
     printf("On Entering MQStat.mq_curmsgs: %ld\n",MQStat.mq_curmsgs);
-    ssize_t NoOfBytesRx = mq_receive(sendBox, &msg, sizeof(msg) , 0);
+    ssize_t NoOfBytesRx = mq_receive(sendBox, (char *) &msg, sizeof(msg) , 0);
     
     if(NoOfBytesRx == ERROR)
     {
         perror("mq_receive");
         return;
     }
-    
+
     //reinterpret_cast<WMessage *>(WMessage * )
     
     sendQueue.push(msg);

@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
         //std::string msgOut = "Hello";
         //const char * msgOutC = msgOut.c_str();
 
-    	okay = okay && mq_send(sendBox, (char*) &msgOut, sizeof(msgOut), 1) == OK;
+    	okay = okay && mq_send(sendBox, (char *) &msgOut, sizeof(msgOut), 1) == OK;
         logger.logEvent(eLevels::INFO, "Placed something in sendBox. okay: %d", okay);
         sleep(1);
     }
