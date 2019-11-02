@@ -50,26 +50,4 @@ struct WMessage {
     uint32_t  battery;
 };
 
-std::string ToString(WMessage & msg)
-{
-	std::string ret;
-
-	ret += std::to_string(msg.x_dir) + ",";
-	ret += std::to_string(msg.type)+ ",";
-	ret += std::to_string(msg.y_dir)+ ",";
-	ret += std::to_string(msg.button)+ ",";
-	ret += std::to_string(msg.btnState)+ ",";
-	ret += std::to_string(msg.battery);
-
-	ret = "hello";
-
-	return ret;
-}
-
-WMessage ToWMessage(std::string str)
-{
-	WMessage ret;
-	return ret;
-}
-
 #endif
