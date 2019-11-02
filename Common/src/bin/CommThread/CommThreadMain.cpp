@@ -119,12 +119,12 @@ int main(int argc, char *argv[])
     switch(systemType)
     {
         case CONTROLLER:
-            //okay = okay && connection.connectToConsole();
+            okay = okay && connection.connectToConsole();
             logger.logEvent(eLevels::INFO, "Controller CommThread Starting...");
             std::cout << "Controller CommThread Starting..." << std::endl;
             break;
         case CONSOLE:
-            //okay = okay && connection.connectToController();
+            okay = okay && connection.connectToController();
             logger.logEvent(eLevels::INFO, "Console CommThread Starting...");
             std::cout << "Console CommThread Starting..." << std::endl;
             break;
@@ -136,22 +136,22 @@ int main(int argc, char *argv[])
     WMessage msgIn;
     while(okay)
     {
-        //if (connection.isDataAvailable()) // if data is coming in over bluetooth
-        //{
-            //int bytesRead = 0;
-            //WPacket payload;
-            //okay = okay && connection.receive(bytesRead, (char *) &payload);
-            //WMessage msgIn = RxWMsg(payload);
-            //okay = okay && mq_send(recvBox, (const char *) &msgIn, sizeof(msgIn), 0) == OK;
-        //}
-        if (!sendQueue.empty())
+        if (connection.isDataAvailable()) // if data is coming in over bluetooth
+        {
+            int bytesRead = 0;
+            WPacket payload;
+            okay = okay && connection.receive(bytesRead, (char *) &payload);
+            WMessage msgIn = RxWMsg(payload);
+            okay = okay && mq_send(recvBox, (const char *) &msgIn, sizeof(msgIn), 0) == OK;
+        }
+        if (!sendQueue.empty()) // if data needs to be sent over bluetooth
         {
             msgIn = sendQueue.front();
             WPacket payload = TxWMsg(msgIn);
             printf("Msg received, type: %d\n", msgIn.type);
             logger.logEvent(eLevels::INFO, "received message");
             sendQueue.pop();
-            //okay = okay && connection.send(sizeof(payload), (char *) &payload);
+            okay = okay && connection.send(sizeof(payload), (char *) &payload);
         }
     }
 
