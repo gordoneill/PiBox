@@ -10,7 +10,8 @@ class Asteroids : public QGraphicsView
 public:
     Asteroids(QWidget * parent=0);
 private:
-    Spaceship spaceship_;
+    QGraphicsScene * scene_;
+    Spaceship * spaceship_;
 };
 
 #endif // ASTEROIDS_H
