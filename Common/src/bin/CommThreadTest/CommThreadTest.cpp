@@ -23,26 +23,22 @@ static void recvBoxOnData(union sigval sv)
         perror("mq_getattr");
         return;
     }
-    printf("On Entering MQStat.mq_curmsgs: %ld\n",MQStat.mq_curmsgs);
+    printf("On Entering MQStat.mq_curmsgs: %ld\n", MQStat.mq_curmsgs);
     
     WMessage msgIn;
-    ssize_t noOfBytesRx = mq_receive(recvBox, (char *) &msgIn, sizeof(msgIn) , NULL);
-    if(noOfBytesRx == ERROR)
+    while (errno != EAGAIN)
     {
-        perror("mq_receive");
-        return;
+        mq_receive(recvBox, (char *) &msgIn, 8192 , NULL);
     }
     
-    printf("MSG type: &d\n", msgIn.type);
-
     if(mq_getattr(recvBox, &MQStat) == ERROR)
     {
         perror("mq_getattr");
         return;
     }
     
-    printf("On Exiting MQStat.mq_curmsgs: %ld\n",MQStat.mq_curmsgs);
-    
+    printf("On Exiting MQStat.mq_curmsgs: %ld\n", MQStat.mq_curmsgs);
+
     struct sigevent signal;
     signal.sigev_notify = SIGEV_THREAD;
     signal.sigev_notify_function = recvBoxOnData;
@@ -77,11 +73,10 @@ int main(int argc, char *argv[])
     attr.mq_maxmsg = MAX_MESSAGES;
     attr.mq_msgsize = MAX_MQ_MSG_SIZE;
     attr.mq_curmsgs = 0;
-    mqd_t sendBox, recvBox;
     // mailbox of messages to be sent over bluetooth
     sendBox = mq_open(sendQueueName, O_RDWR, QUEUE_PERMISSIONS, attr);
     // mailbox of messges received over bluetooth
-    recvBox = mq_open(recvQueueName, O_RDWR, QUEUE_PERMISSIONS, attr);
+    recvBox = mq_open(recvQueueName, O_RDWR|O_NONBLOCK, QUEUE_PERMISSIONS, attr);
 
     if (sendBox == ERROR)
     {
