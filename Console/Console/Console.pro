@@ -25,10 +25,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+    spaceship.cpp
 
 HEADERS += \
-        mainwindow.h
+    spaceship.h
 
-FORMS += \
-        mainwindow.ui
+FORMS +=
