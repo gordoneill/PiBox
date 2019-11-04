@@ -14,7 +14,9 @@ Asteroids::Asteroids(QWidget * /*parent*/)
     spaceship_.setRect(0,0,100,100);
     spaceship_.setFlag(QGraphicsItem::ItemIsFocusable);
     spaceship_.setPos(this->width()/2-spaceship_.rect().width()/2,
-                     this->height()-spaceship_.rect().height()-10);
+                      this->height()-spaceship_.rect().height()-10);
     spaceship_.setFocus();
     scene.addItem(&spaceship_);
+
+    showFullScreen();
 }

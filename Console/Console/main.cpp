@@ -2,7 +2,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include "asteroids.h"
-#include "mqueue.h"
+//#include "mqueue.h"
 //#include "msgQueueConst.h"
 
 //mqd_t sendBox, recvBox;
@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Asteroids game;
-    game.showFullScreen();
+    Asteroids * game = new Asteroids();
+    game->showFullScreen();
 
 //    struct mq_attr attr;
 //    attr.mq_flags = 0;
