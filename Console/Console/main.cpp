@@ -1,4 +1,3 @@
-#include "mainwindow.h"
 #include <QApplication>
 #include <QGraphicsScene>
 #include "spaceship.h"
@@ -15,6 +14,8 @@ int main(int argc, char *argv[])
     spaceship->setFocus();
 
     QGraphicsView * view = new QGraphicsView(scene);
+    view->setStyleSheet("background-color:black;");
+    view->setFixedSize(1920, 1080);
     view->showFullScreen();
     return a.exec();
 }

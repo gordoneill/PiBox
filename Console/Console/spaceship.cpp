@@ -1,4 +1,5 @@
 #include "spaceship.h"
+#include "laser.h"
 
 Spaceship::Spaceship()
 {
@@ -12,9 +13,16 @@ void Spaceship::keyPressEvent(QKeyEvent * event)
         case Qt::Key_Left:
             setPos(x()-10, y());
             break;
-        case  Qt::Key_Right:
+        case Qt::Key_Right:
             setPos(x()+10, y());
             break;
+        case Qt::Key_Space:
+        {
+            Laser * laser = new Laser();
+            laser->setPos(x()+50, y());
+            this->scene()->addItem(laser);
+            break;
+        }
         default:
             break;
     }

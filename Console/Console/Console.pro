@@ -25,9 +25,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-    spaceship.cpp
+    spaceship.cpp \
+    laser.cpp
 
 HEADERS += \
-    spaceship.h
+    spaceship.h \
+    laser.h
 
 FORMS +=

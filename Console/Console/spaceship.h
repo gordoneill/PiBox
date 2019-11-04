@@ -2,6 +2,7 @@
 #define SPACESHIP_H
 #include <QGraphicsRectItem>
 #include <QKeyEvent>
+#include <QGraphicsScene>
 
 class Spaceship : public QGraphicsRectItem
 {
