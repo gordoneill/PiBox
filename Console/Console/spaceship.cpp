@@ -19,7 +19,7 @@ void Spaceship::keyPressEvent(QKeyEvent * event)
         case Qt::Key_Space:
         {
             Laser * laser = new Laser();
-            laser->setPos(x()+50, y());
+            laser->setPos(x()+rect().width()/2-laser->rect().width()/2, y());
             this->scene()->addItem(laser);
             break;
         }

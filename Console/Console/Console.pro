@@ -26,10 +26,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     spaceship.cpp \
-    laser.cpp
+    laser.cpp \
+    asteroids.cpp
 
 HEADERS += \
     spaceship.h \
-    laser.h
+    laser.h \
+    asteroids.h
 
 FORMS +=
+
+LIBS += -lrt
