@@ -1,6 +1,7 @@
 #ifndef LASER_H
 #define LASER_H
 #include <QGraphicsRectItem>
+#include <QGraphicsScene>
 
 class Laser : public QObject, public QGraphicsRectItem
 {

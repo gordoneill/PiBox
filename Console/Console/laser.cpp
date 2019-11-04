@@ -12,4 +12,9 @@ Laser::Laser()
 void Laser::move()
 {
     setPos(x(), y()-10);
+    if (this->pos().y() + this->rect().height() < 0)
+    {
+        this->scene()->removeItem(this);
+        delete this;
+    }
 }
