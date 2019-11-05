@@ -37,3 +37,6 @@ HEADERS += \
 FORMS +=
 
 LIBS += -lrt
+
+RESOURCES += \
+    graphics.qrc
