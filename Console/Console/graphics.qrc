@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/graphics">
-        <file>graphics/asteroidsWallpaper.png</file>
-        <file>graphics/pi.png</file>
+        <file>asteroidsWallpaper.png</file>
+        <file>pi.png</file>
     </qresource>
 </RCC>
