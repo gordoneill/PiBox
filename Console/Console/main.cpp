@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QGraphicsScene>
 #include <QGraphicsView>
-#include "asteroids.h"
+#include "AsteroidsGame.h"
 //#include "mqueue.h"
 //#include "msgQueueConst.h"
 
@@ -9,16 +9,22 @@
 
 //static void recvBoxOnData(union sigval sv)
 //{
+//    AsteroidsGame * game = (AsteroidsGame *) sv.sival_ptr;
 //    WMessage msgIn;
 //    while (errno != EAGAIN)
 //    {
 //        mq_receive(recvBox, (char *) &msgIn, 8192 , NULL);
-//        recvQueue.push(msgIn);
+//        if(msgIn.type == eMsgTypes::BUTTON && msgIn.button == eButtons::BTN_A && btnState == true)
+//        {
+//            QKeyEvent * ev = new QKeyEvent(QEvent::KeyPress, Qt::Key_Space);
+//            QCoreApplication::postEvent(game, ev);
+//        }
 //    }
 //    struct sigevent signal;
 //    signal.sigev_notify = SIGEV_THREAD;
 //    signal.sigev_notify_function = recvBoxOnData;
 //    signal.sigev_notify_attributes = NULL;
+//    signal.sigev_ptr = sv.sival_ptr;
 //    if(mq_notify(sendBox, &signal) == ERROR)
 //    {
 //        perror("mq_notify");
@@ -30,8 +36,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Asteroids * game = new Asteroids();
-    game->showFullScreen();
+    AsteroidsGame * game = new AsteroidsGame();
 
 //    struct mq_attr attr;
 //    attr.mq_flags = 0;
@@ -62,11 +67,14 @@ int main(int argc, char *argv[])
 //    signal.sigev_notify = SIGEV_THREAD;
 //    signal.sigev_notify_function = recvBoxOnData;
 //    signal.sigev_notify_attributes = NULL;
+//    signal.sigev_ptr = game;
 //    if(mq_notify(recvBox, &signal) == ERROR)
 //    {
 //        perror("mq_notify");
 //        okay = false;
 //    }
+
+    game->showFullScreen();
 
 //    mq_unlink(sendQueueName);
 //    mq_unlink(recvQueueName);

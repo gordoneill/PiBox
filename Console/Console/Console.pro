@@ -25,18 +25,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-    spaceship.cpp \
-    laser.cpp \
-    asteroids.cpp
+    Laser.cpp \
+    Spaceship.cpp \
+    AsteroidsGame.cpp \
+    Asteroid.cpp \
+    Score.cpp
 
 HEADERS += \
-    spaceship.h \
-    laser.h \
-    asteroids.h
+    AsteroidsGame.h \
+    Spaceship.h \
+    Laser.h \
+    Asteroid.h \
+    Score.h
 
 FORMS +=
 
-LIBS += -lrt
+LIBS += \
+    -lrt \
+    -lX11
 
 RESOURCES += \
     graphics.qrc
