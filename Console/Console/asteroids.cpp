@@ -1,15 +1,17 @@
 #include "asteroids.h"
+#include <QBrush>
+#include <QImage>
 
 Asteroids::Asteroids(QWidget * parent)
 {
     scene_ = new QGraphicsScene();
     scene_->setSceneRect(0,0,1920,1080);
     setScene(scene_);
+    setBackgroundBrush(QBrush(QImage(":/graphics/asteroidsWallpaper.png")));
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setFixedSize(1920, 1080);
-    //setStyleSheet("background-color:black;");
 
     spaceship_ = new Spaceship();
     spaceship_->setRect(0,0,100,100);

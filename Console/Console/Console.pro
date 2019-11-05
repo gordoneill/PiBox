@@ -35,3 +35,5 @@ HEADERS += \
     asteroids.h
 
 FORMS +=
+
+LIBS += -lrt
