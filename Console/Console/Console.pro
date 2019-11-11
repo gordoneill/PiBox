@@ -44,5 +44,7 @@ LIBS += \
     -lrt \
     -lX11
 
+INCLUDEPATH += ../../Common/include
+
 RESOURCES += \
     graphics.qrc

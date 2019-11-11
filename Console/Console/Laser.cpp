@@ -36,7 +36,7 @@ void Laser::move()
             }
         }
 
-        setPos(x(), y()-5);
+        setPos(x(), y()-10);
         if (this->pos().y() < 0)
         {
             this->scene()->removeItem(this);

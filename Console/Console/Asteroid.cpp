@@ -3,21 +3,14 @@
 #include <QTimer>
 #include <QGraphicsScene>
 #include <QList>
-#include <stdlib.h>
 #include <iostream>
 #include <Score.h>
 
-Asteroid::Asteroid(qreal sceneWidth, QGraphicsItem * parent) :
+Asteroid::Asteroid(QGraphicsItem * parent) :
     QObject(),
     QGraphicsPixmapItem(parent)
 {
     setPixmap(QPixmap(":/graphics/asteroid.png"));
-    int asteroidWidth = pixmap().width();
-    std::cout << asteroidWidth << std::endl;
-    int asteroidStart =
-            rand() % ((int)sceneWidth - asteroidWidth*2) + asteroidWidth;
-    setPos(asteroidStart, 0);
-
     connect(&moveTimer_, SIGNAL(timeout()), this, SLOT(move()));
     moveTimer_.start(25);
 }

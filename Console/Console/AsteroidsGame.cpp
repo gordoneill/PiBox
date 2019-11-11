@@ -4,6 +4,7 @@
 #include <QImage>
 #include <iostream>
 #include <unistd.h>
+#include <stdlib.h>
 
 AsteroidsGame::AsteroidsGame(QWidget * /*parent*/)
 {
@@ -44,7 +45,11 @@ AsteroidsGame::~AsteroidsGame()
 
 void AsteroidsGame::spawn()
 {
-    Asteroid * asteroid = new Asteroid(scene_->sceneRect().width());
+    Asteroid * asteroid = new Asteroid();
+    int asteroidStart = rand() %
+            ((int)scene_->sceneRect().width() - asteroid->pixmap().width()*2)
+                + asteroid->pixmap().width();
+    asteroid->setPos(asteroidStart, 0);
     scene_->addItem(asteroid);
     connect(asteroid, SIGNAL(endGame()), this, SLOT(endGame()));
 }
