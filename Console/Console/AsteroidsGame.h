@@ -14,7 +14,7 @@ class AsteroidsGame : public QGraphicsView
 public:
     AsteroidsGame(QWidget * parent=0);
     ~AsteroidsGame();
-public slots:
+private slots:
     void spawnAsteroid();
     void endGame();
 private:

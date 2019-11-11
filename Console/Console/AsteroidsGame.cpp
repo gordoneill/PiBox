@@ -29,8 +29,9 @@ AsteroidsGame::AsteroidsGame(QWidget * /*parent*/)
     scene_->addItem(score_);
 
     // Spawn Asteroids
-    QObject::connect(&spawnTimer_, SIGNAL(timeout()), this, SLOT(AsteroidsGame::spawnAsteroid()));
+    QObject::connect(&spawnTimer_, SIGNAL(timeout()), this, SLOT(spawnAsteroid()));
     spawnTimer_.start(2000);
+    spawnAsteroid();
 
     showFullScreen();
 }
