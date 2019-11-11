@@ -8,19 +8,19 @@ Score::Score(QGraphicsItem * parent) :
 {
     setPlainText(playerName_ + QString(" Score: ") +
                  QString::number(score_));
-    setDefaultTextColor(Qt::blue);
-    setFont(QFont("times",16));
+    setDefaultTextColor(Qt::green);
+    setFont(QFont("Calibri",16));
 }
 
 void Score::increase()
 {
-    score_++;
+    score_+=10;
     setPlainText(playerName_ + QString(" Score: ") +
                  QString::number(score_));
 }
 
 void Score::decrease(){
-    score_--;
+    score_-=10;
     setPlainText(playerName_ + QString(" Score: ") +
                  QString::number(score_));
 }
@@ -28,6 +28,8 @@ void Score::decrease(){
 void Score::setPlayerName(QString name)
 {
     playerName_ = name;
+    setPlainText(playerName_ + QString(" Score: ") +
+                 QString::number(score_));
 }
 
 QString Score::getPlayerName()

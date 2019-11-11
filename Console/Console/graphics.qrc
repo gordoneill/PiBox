@@ -1,9 +1,9 @@
 <RCC>
     <qresource prefix="/graphics">
-        <file>asteroidsWallpaper.png</file>
         <file>pi.png</file>
         <file>spaceship.png</file>
         <file>laser.png</file>
         <file>asteroid.png</file>
+        <file>asteroidsWallpaper.jpg</file>
     </qresource>
 </RCC>

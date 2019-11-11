@@ -15,6 +15,7 @@ public:
 private slots:
     void move();
 private:
+    void increaseScore();
     QTimer moveTimer_;
 };
 

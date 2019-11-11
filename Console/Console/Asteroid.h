@@ -10,12 +10,13 @@ class Asteroid : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Asteroid(QGraphicsItem * parent = 0);
+    Asteroid(qreal sceneWidth, QGraphicsItem * parent = 0);
 signals:
     void endGame();
 private slots:
     void move();
 private:
+    void decreaseScore();
     QTimer moveTimer_;
 };
 

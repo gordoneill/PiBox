@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
 //    }
 
     game->showFullScreen();
+    //delete game;
 
 //    mq_unlink(sendQueueName);
 //    mq_unlink(recvQueueName);

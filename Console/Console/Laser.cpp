@@ -1,6 +1,7 @@
 #include "Laser.h"
 #include "Asteroid.h"
 #include "Score.h"
+#include <iostream>
 
 Laser::Laser(QGraphicsItem * parent) :
     QObject(),
@@ -8,43 +9,50 @@ Laser::Laser(QGraphicsItem * parent) :
 {
     setPixmap(QPixmap(":/graphics/laser.png"));
     connect(&moveTimer_, SIGNAL(timeout()), this , SLOT(move()));
-    moveTimer_.start(50);
+    moveTimer_.start(25);
 }
 
 void Laser::move()
 {
-    // if one of the colliding items is an Asteroid,
-    //    destroy both the Asteroid and the Laser
-    for (auto * collision : collidingItems())
+    if (this->scene() == NULL)
     {
-        if (typeid(*collision) == typeid(Asteroid))
+        std::cerr << "Laser::move scene NULL" << std::endl;
+    }
+    else
+    {
+        for (auto * collision : collidingItems())
         {
-            // increase the score
-            for (auto * item : scene()->items())
+            if (typeid(*collision) == typeid(Asteroid))
             {
-                if (typeid(*item) == typeid(Score))
-                {
-                    Score * gameScore = (Score *) item;
-                    gameScore->increase();
-                }
+                increaseScore();
+
+                scene()->removeItem(collision);
+                scene()->removeItem(this);
+
+                delete collision;
+                delete this;
+
+                return;
             }
+        }
 
-            // remove them from the scene (still on the heap)
-            scene()->removeItem(collision);
-            scene()->removeItem(this);
-
-            // delete them from the heap to save memory
-            delete collision;
+        setPos(x(), y()-5);
+        if (this->pos().y() < 0)
+        {
+            this->scene()->removeItem(this);
             delete this;
-
-            return;
         }
     }
+}
 
-    setPos(x(), y()-10);
-    if (this->pos().y() < 0)
+void Laser::increaseScore()
+{
+    for (auto * item : scene()->items())
     {
-        this->scene()->removeItem(this);
-        delete this;
+        if (typeid(*item) == typeid(Score))
+        {
+            Score * gameScore = (Score *) item;
+            gameScore->increase();
+        }
     }
 }

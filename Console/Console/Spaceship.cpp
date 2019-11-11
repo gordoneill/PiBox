@@ -1,5 +1,6 @@
 #include "Spaceship.h"
 #include "Laser.h"
+#include <iostream>
 
 Spaceship::Spaceship(QGraphicsItem * parent) :
     QGraphicsPixmapItem(parent)
@@ -9,22 +10,35 @@ Spaceship::Spaceship(QGraphicsItem * parent) :
 
 void Spaceship::keyPressEvent(QKeyEvent * event)
 {
-    switch(event->key())
+    if (this->scene() == NULL)
     {
-        case Qt::Key_Left:
-            setPos(x()-10, y());
-            break;
-        case Qt::Key_Right:
-            setPos(x()+10, y());
-            break;
-        case Qt::Key_Space:
+        std::cerr << "Spaceship::keyPressEvent scene NULL" << std::endl;
+    }
+    else
+    {
+        switch(event->key())
         {
-            Laser * laser = new Laser();
-            laser->setPos(x()+pixmap().width()/2-laser->pixmap().width()/2, y());
-            this->scene()->addItem(laser);
-            break;
+            case Qt::Key_Left:
+                if (pos().x() > 0)
+                {
+                    setPos(x()-10, y());
+                }
+                break;
+            case Qt::Key_Right:
+                if (pos().x() + pixmap().width() < this->scene()->width())
+                {
+                    setPos(x()+10, y());
+                }
+                break;
+            case Qt::Key_Space:
+            {
+                Laser * laser = new Laser();
+                laser->setPos(x()+pixmap().width()/2-laser->pixmap().width()/2, y());
+                this->scene()->addItem(laser);
+                break;
+            }
+            default:
+                break;
         }
-        default:
-            break;
     }
 }

@@ -11,17 +11,19 @@
 
 class AsteroidsGame : public QGraphicsView
 {
+    Q_OBJECT
 public:
     AsteroidsGame(QWidget * parent=0);
     ~AsteroidsGame();
 private slots:
-    void spawnAsteroid();
+    void spawn();
     void endGame();
 private:
     void getDesktopResolution(int& h, int& v);
     QGraphicsScene * scene_;
     Spaceship * spaceship_;
     QTimer spawnTimer_;
+    QTimer gameOverTimer_;
     Score * score_;
 };
 
