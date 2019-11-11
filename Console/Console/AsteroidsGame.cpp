@@ -55,6 +55,8 @@ void AsteroidsGame::getDesktopResolution(int & h, int & v)
     Screen * s = DefaultScreenOfDisplay(d);
     h = s->height;
     v = s->width;
+    h = 1920;
+    v = 1080;
 }
 
 void AsteroidsGame::endGame()
