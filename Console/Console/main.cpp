@@ -39,8 +39,8 @@ static void recvBoxOnData(union sigval sv)
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    Console * console;
 
+    Console * console;
     console = new Console();
 
     struct mq_attr attr;

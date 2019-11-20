@@ -8,7 +8,6 @@
 #include "Spaceship.h"
 #include "ConsoleStatus.h"
 #include "Score.h"
-#include <X11/Xlib.h>
 
 #define MAX_LEVEL 5
 
@@ -16,7 +15,7 @@ class AsteroidsGame : public QGraphicsView
 {
     Q_OBJECT
 public:
-    AsteroidsGame(QWidget * parent = nullptr);
+    AsteroidsGame(int h, int v, QWidget * parent = nullptr);
     ~AsteroidsGame();
     void setConsoleStatus(ConsoleStatus * status);
 signals:
@@ -27,7 +26,6 @@ private slots:
     void endGame();
     void goBackToWelcome();
 private:
-    void getDesktopResolution(int& h, int& v);
     QGraphicsScene * scene_;
     Spaceship * spaceship_;
     QTimer spawnTimer_;

@@ -1,8 +1,6 @@
 #include "Asteroid.h"
 #include "Spaceship.h"
-#include <QTimer>
 #include <QGraphicsScene>
-#include <QList>
 #include <iostream>
 #include <Score.h>
 

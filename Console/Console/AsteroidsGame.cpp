@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-AsteroidsGame::AsteroidsGame(QWidget * /*parent*/) :
+AsteroidsGame::AsteroidsGame(int h, int v, QWidget * /*parent*/) :
     scene_(nullptr),
     spaceship_(nullptr),
     spawnTimer_(),
@@ -14,9 +14,6 @@ AsteroidsGame::AsteroidsGame(QWidget * /*parent*/) :
     score_(nullptr),
     level_(1)
 {
-    int h, v;
-    getDesktopResolution(h, v);
-
     scene_ = new QGraphicsScene();
     scene_->setSceneRect(0, 0, h, v);
     setScene(scene_);
@@ -56,7 +53,8 @@ AsteroidsGame::~AsteroidsGame()
 
 void AsteroidsGame::setConsoleStatus(ConsoleStatus * status)
 {
-    scene_->addItem(status);
+    scene_->addItem(status->getConnectionPix());
+    scene_->addItem(status->getBatteryPix());
 }
 
 void AsteroidsGame::spawn()
@@ -98,14 +96,6 @@ void AsteroidsGame::increaseLevel()
                 break;
         }
     }
-}
-
-void AsteroidsGame::getDesktopResolution(int & h, int & v)
-{
-    Display * d = XOpenDisplay(nullptr);
-    Screen * s = DefaultScreenOfDisplay(d);
-    v = s->height;
-    h = s->width;
 }
 
 void AsteroidsGame::endGame()
