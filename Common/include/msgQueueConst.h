@@ -1,3 +1,5 @@
+#include "mqueue.h"
+
 #define QUEUE_PERMISSIONS 0660
 #define MAX_MESSAGES 10
 #define MAX_MQ_MSG_SIZE 256

@@ -10,7 +10,7 @@ Spaceship::Spaceship(QGraphicsItem * parent) :
 
 void Spaceship::keyPressEvent(QKeyEvent * event)
 {
-    if (this->scene() == NULL)
+    if (this->scene() == nullptr)
     {
         std::cerr << "Spaceship::keyPressEvent scene NULL" << std::endl;
     }

@@ -6,7 +6,13 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-AsteroidsGame::AsteroidsGame(QWidget * /*parent*/)
+AsteroidsGame::AsteroidsGame(QWidget * /*parent*/) :
+    scene_(nullptr),
+    spaceship_(nullptr),
+    spawnTimer_(),
+    gameOverTimer_(),
+    score_(nullptr),
+    level_(1)
 {
     int h, v;
     getDesktopResolution(h, v);
@@ -28,12 +34,17 @@ AsteroidsGame::AsteroidsGame(QWidget * /*parent*/)
     scene_->addItem(spaceship_);
 
     score_ = new Score();
-    score_->setPlayerName("Gordon");
+    score_->setPlayerName("Player");
     scene_->addItem(score_);
+    connect(score_, SIGNAL(endGame()), this, SLOT(endGame()));
+
+    // Spawn Asteroids
+    connect(&levelTimer_, SIGNAL(timeout()), this, SLOT(increaseLevel()));
+    levelTimer_.start(20000);
 
     // Spawn Asteroids
     connect(&spawnTimer_, SIGNAL(timeout()), this, SLOT(spawn()));
-    spawnTimer_.start(2000);
+    spawnTimer_.start(4000);
 }
 
 AsteroidsGame::~AsteroidsGame()
@@ -43,20 +54,55 @@ AsteroidsGame::~AsteroidsGame()
     delete score_;
 }
 
+void AsteroidsGame::setConsoleStatus(ConsoleStatus * status)
+{
+    scene_->addItem(status);
+}
+
 void AsteroidsGame::spawn()
 {
     Asteroid * asteroid = new Asteroid();
+    srand(static_cast<unsigned int>(clock()));
     int asteroidStart = rand() %
-            ((int)scene_->sceneRect().width() - asteroid->pixmap().width()*2)
-                + asteroid->pixmap().width();
+            (static_cast<int>(scene_->sceneRect().width()) -
+                asteroid->pixmap().width()*2) + asteroid->pixmap().width();
     asteroid->setPos(asteroidStart, 0);
     scene_->addItem(asteroid);
     connect(asteroid, SIGNAL(endGame()), this, SLOT(endGame()));
 }
 
+void AsteroidsGame::increaseLevel()
+{
+    if (level_ < MAX_LEVEL)
+    {
+        level_++;
+        spawnTimer_.stop();
+        switch (level_)
+        {
+            case 1:
+                spawnTimer_.start(4000);
+                break;
+            case 2:
+                spawnTimer_.start(3000);
+                break;
+            case 3:
+                spawnTimer_.start(2000);
+                break;
+            case 4:
+                spawnTimer_.start(1500);
+                break;
+            case 5:
+                spawnTimer_.start(1100);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 void AsteroidsGame::getDesktopResolution(int & h, int & v)
 {
-    Display * d = XOpenDisplay(NULL);
+    Display * d = XOpenDisplay(nullptr);
     Screen * s = DefaultScreenOfDisplay(d);
     v = s->height;
     h = s->width;
@@ -68,6 +114,7 @@ void AsteroidsGame::endGame()
     // somehow get the game back to game selection
     spawnTimer_.stop();
     scene_->removeItem(spaceship_);
+    score_->freezeScore();
 
     QGraphicsTextItem * gameOver = new QGraphicsTextItem();
     gameOver->setPlainText("GAME OVER");
@@ -79,6 +126,12 @@ void AsteroidsGame::endGame()
                         gameOver->boundingRect().height()/2);
     scene_->addItem(gameOver);
 
-    connect(&gameOverTimer_, SIGNAL(timeout()), this, SLOT(close()));
+    connect(&gameOverTimer_, SIGNAL(timeout()), this, SLOT(goBackToWelcome()));
     gameOverTimer_.start(5000);
+}
+
+void AsteroidsGame::goBackToWelcome()
+{
+    emit backToWelcome();
+    close();
 }

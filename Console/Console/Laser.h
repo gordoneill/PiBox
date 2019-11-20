@@ -11,7 +11,7 @@ class Laser : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Laser(QGraphicsItem * parent=0);
+    Laser(QGraphicsItem * parent = nullptr);
 private slots:
     void move();
 private:

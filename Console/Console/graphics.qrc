@@ -5,5 +5,8 @@
         <file>laser.png</file>
         <file>asteroid.png</file>
         <file>asteroidsWallpaper.jpg</file>
+        <file>welcome.jpg</file>
+        <file>connected.png</file>
+        <file>disconnected.png</file>
     </qresource>
 </RCC>

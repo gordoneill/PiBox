@@ -9,12 +9,12 @@ Laser::Laser(QGraphicsItem * parent) :
 {
     setPixmap(QPixmap(":/graphics/laser.png"));
     connect(&moveTimer_, SIGNAL(timeout()), this , SLOT(move()));
-    moveTimer_.start(25);
+    moveTimer_.start(5);
 }
 
 void Laser::move()
 {
-    if (this->scene() == NULL)
+    if (this->scene() == nullptr)
     {
         std::cerr << "Laser::move scene NULL" << std::endl;
     }
@@ -36,8 +36,8 @@ void Laser::move()
             }
         }
 
-        setPos(x(), y()-10);
-        if (this->pos().y() < 0)
+        setPos(x(), y()-5);
+        if (this->pos().y() < (this->pixmap().height() * -1))
         {
             this->scene()->removeItem(this);
             delete this;
@@ -51,7 +51,7 @@ void Laser::increaseScore()
     {
         if (typeid(*item) == typeid(Score))
         {
-            Score * gameScore = (Score *) item;
+            Score * gameScore = static_cast<Score *>(item);
             gameScore->increase();
         }
     }

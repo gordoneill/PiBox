@@ -10,7 +10,7 @@ class Spaceship : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Spaceship(QGraphicsItem * parent = 0);
+    Spaceship(QGraphicsItem * parent = nullptr);
 private:
     void keyPressEvent(QKeyEvent * event);
 };

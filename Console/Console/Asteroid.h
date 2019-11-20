@@ -10,7 +10,7 @@ class Asteroid : public QObject, public QGraphicsPixmapItem
 {
     Q_OBJECT
 public:
-    Asteroid(QGraphicsItem * parent = 0);
+    Asteroid(QGraphicsItem * parent = nullptr);
 signals:
     void endGame();
 private slots:

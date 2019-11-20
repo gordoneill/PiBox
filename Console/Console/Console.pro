@@ -24,6 +24,9 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
+    Console.cpp \
+    ConsoleStatus.cpp \
+    WelcomeScreen.cpp \
         main.cpp \
     Laser.cpp \
     Spaceship.cpp \
@@ -33,10 +36,13 @@ SOURCES += \
 
 HEADERS += \
     AsteroidsGame.h \
+    Console.h \
+    ConsoleStatus.h \
     Spaceship.h \
     Laser.h \
     Asteroid.h \
-    Score.h
+    Score.h \
+    WelcomeScreen.h
 
 FORMS +=
 

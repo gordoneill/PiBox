@@ -4,7 +4,8 @@
 Score::Score(QGraphicsItem * parent) :
     QGraphicsTextItem(parent),
     playerName_(""),
-    score_(0)
+    score_(0),
+    freezeScore_(false)
 {
     setPlainText(playerName_ + QString(" Score: ") +
                  QString::number(score_));
@@ -14,15 +15,30 @@ Score::Score(QGraphicsItem * parent) :
 
 void Score::increase()
 {
-    score_+=10;
-    setPlainText(playerName_ + QString(" Score: ") +
-                 QString::number(score_));
+    if (!freezeScore_)
+    {
+        score_+=10;
+        setPlainText(playerName_ + QString(" Score: ") +
+                     QString::number(score_));
+    }
 }
 
-void Score::decrease(){
-    score_-=10;
-    setPlainText(playerName_ + QString(" Score: ") +
-                 QString::number(score_));
+void Score::decrease()
+{
+    if (!freezeScore_)
+    {
+        score_-=10;
+
+        if (score_ < 0)
+        {
+            emit endGame();
+        }
+        else
+        {
+            setPlainText(playerName_ + QString(" Score: ") +
+                         QString::number(score_));
+        }
+    }
 }
 
 void Score::setPlayerName(QString name)
@@ -40,4 +56,9 @@ QString Score::getPlayerName()
 int Score::getScore()
 {
     return score_;
+}
+
+void Score::freezeScore()
+{
+    freezeScore_ = true;
 }

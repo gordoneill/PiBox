@@ -12,18 +12,18 @@ Asteroid::Asteroid(QGraphicsItem * parent) :
 {
     setPixmap(QPixmap(":/graphics/asteroid.png"));
     connect(&moveTimer_, SIGNAL(timeout()), this, SLOT(move()));
-    moveTimer_.start(25);
+    moveTimer_.start(5);
 }
 
 void Asteroid::move()
 {
-    if (this->scene() == NULL)
+    if (this->scene() == nullptr)
     {
         std::cerr << "Asteroid::move scene NULL" << std::endl;
     }
     else
     {
-        setPos(x(),y()+5);
+        setPos(x(),y()+1);
 
         // if a colliding items is the spaceship, end game
         for (auto * item : collidingItems())
@@ -51,7 +51,7 @@ void Asteroid::decreaseScore()
     {
         if (typeid(*item) == typeid(Score))
         {
-            Score * gameScore = (Score *) item;
+            Score * gameScore = static_cast<Score *>(item);
             gameScore->decrease();
         }
     }
