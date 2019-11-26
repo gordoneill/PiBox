@@ -37,6 +37,9 @@ Console::Console(QWidget * /*parent*/) :
 
     connect(&welcomeTimer_, SIGNAL(timeout()), this, SLOT(init()));
     welcomeTimer_.start(5000);
+
+    connect(&connectionTimer_, SIGNAL(timeout()), this, SLOT(connectionTimeout()));
+    connectionTimer_.start(2000);
 }
 
 Console::~Console()
@@ -49,12 +52,17 @@ void Console::init()
 {
     welcomeTimer_.stop();
 
+    if (game_ != nullptr)
+    {
+        game_->close();
+    }
+
+    welcome_->setConsoleStatus(status_);
     welcome_->showFullScreen();
     welcome_->setFocus();
-    welcome_->setConsoleStatus(status_);
+
 
     connect(welcome_, SIGNAL(gameSelected()), this, SLOT(onGameSelected()));
-    connect(&connectionTimer_, SIGNAL(timeout()), this, SLOT(connectionTimeout()));
 
     introView_->close();
 }
@@ -67,12 +75,13 @@ void Console::onGameSelected()
     }
     else
     {
-        delete game_;
-        game_ = new AsteroidsGame(h_, v_);
+        exit(0);
     }
-    game_->setFocus();
-    game_->showFullScreen();
+
     game_->setConsoleStatus(status_);
+    game_->showFullScreen();
+    game_->setFocus();
+
     connect(game_, SIGNAL(backToWelcome()), this, SLOT(init()));
     welcome_->close();
 }
