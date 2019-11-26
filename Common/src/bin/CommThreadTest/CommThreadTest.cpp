@@ -29,6 +29,7 @@ static void recvBoxOnData(union sigval sv)
     while (errno != EAGAIN)
     {
         mq_receive(recvBox, (char *) &msgIn, 8192 , NULL);
+        // DO SOMETHING WITH THE MSG
     }
     
     if(mq_getattr(recvBox, &MQStat) == ERROR)

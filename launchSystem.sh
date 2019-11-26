@@ -1,3 +1,5 @@
-./Common/bin/CommThread & 
-sleep 8
-./Common/bin/CommThreadTest
+rm /dev/mqueue/*
+./Common/bin/CommThread &
+sleep 5
+./Console/build-Console-Raspberry_Pi-Debug/Console
+

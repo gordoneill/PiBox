@@ -142,14 +142,14 @@ int main(int argc, char *argv[])
             WPacket payload;
             okay = okay && connection.receive(bytesRead, (char *) &payload);
             WMessage msgIn = RxWMsg(payload);
+            logger.logEvent(eLevels::INFO, "received message, type: %d", msgIn.type);
             okay = okay && mq_send(recvBox, (const char *) &msgIn, sizeof(msgIn), 0) == OK;
         }
         if (!sendQueue.empty()) // if data needs to be sent over bluetooth
         {
             msgIn = sendQueue.front();
             WPacket payload = TxWMsg(msgIn);
-            printf("Msg received, type: %d\n", msgIn.type);
-            logger.logEvent(eLevels::INFO, "received message");
+            logger.logEvent(eLevels::INFO, "sent message");
             sendQueue.pop();
             okay = okay && connection.send(sizeof(payload), (char *) &payload);
         }
