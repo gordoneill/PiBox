@@ -57,6 +57,11 @@ void AsteroidsGame::setConsoleStatus(ConsoleStatus * status)
     scene_->addItem(status->getBatteryPix());
 }
 
+void AsteroidsGame::control(WMessage msg)
+{
+    spaceship_->control(msg);
+}
+
 void AsteroidsGame::spawn()
 {
     Asteroid * asteroid = new Asteroid();

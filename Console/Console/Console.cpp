@@ -88,10 +88,11 @@ void Console::control(WMessage msgIn)
             status_->updateBattery(msgIn.battery);
             break;
         case eMsgTypes::BUTTON:
-
-            break;
         case eMsgTypes::DIRECTION:
-
+            if (game_)
+            {
+                game_->control(msgIn);
+            }
             break;
         default:
             break;

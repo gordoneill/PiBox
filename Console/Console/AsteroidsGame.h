@@ -8,6 +8,7 @@
 #include "Spaceship.h"
 #include "ConsoleStatus.h"
 #include "Score.h"
+#include "WMsg_structs.h"
 
 #define MAX_LEVEL 5
 
@@ -18,6 +19,7 @@ public:
     AsteroidsGame(int h, int v, QWidget * parent = nullptr);
     ~AsteroidsGame();
     void setConsoleStatus(ConsoleStatus * status);
+    void control(WMessage msg);
 signals:
     void backToWelcome();
 private slots:
