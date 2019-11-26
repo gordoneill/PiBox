@@ -52,19 +52,17 @@ void Console::init()
 {
     welcomeTimer_.stop();
 
-    if (game_ != nullptr)
-    {
-        game_->close();
-    }
-
     welcome_->setConsoleStatus(status_);
     welcome_->showFullScreen();
     welcome_->setFocus();
 
-
     connect(welcome_, SIGNAL(gameSelected()), this, SLOT(onGameSelected()));
 
     introView_->close();
+    if (game_ != nullptr)
+    {
+        game_->close();
+    }
 }
 
 void Console::onGameSelected()
