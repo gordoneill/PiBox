@@ -12,14 +12,17 @@ public:
     void increase();
     void decrease();
     void setPlayerName(QString name);
+    void setLevel(int level);
     QString getPlayerName();
     int getScore();
     void freezeScore();
 signals:
     void endGame();
 private:
+    void updateDisplay();
     QString playerName_;
     int score_;
+    int level_;
     bool freezeScore_;
 };
 

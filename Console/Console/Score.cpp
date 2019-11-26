@@ -5,12 +5,12 @@ Score::Score(QGraphicsItem * parent) :
     QGraphicsTextItem(parent),
     playerName_(""),
     score_(0),
+    level_(1),
     freezeScore_(false)
 {
-    setPlainText(playerName_ + QString(" Score: ") +
-                 QString::number(score_));
     setDefaultTextColor(Qt::green);
     setFont(QFont("Calibri",16));
+    updateDisplay();
 }
 
 void Score::increase()
@@ -18,8 +18,7 @@ void Score::increase()
     if (!freezeScore_)
     {
         score_+=10;
-        setPlainText(playerName_ + QString(" Score: ") +
-                     QString::number(score_));
+        updateDisplay();
     }
 }
 
@@ -35,8 +34,7 @@ void Score::decrease()
         }
         else
         {
-            setPlainText(playerName_ + QString(" Score: ") +
-                         QString::number(score_));
+            updateDisplay();
         }
     }
 }
@@ -46,6 +44,12 @@ void Score::setPlayerName(QString name)
     playerName_ = name;
     setPlainText(playerName_ + QString(" Score: ") +
                  QString::number(score_));
+}
+
+void Score::setLevel(int level)
+{
+    level_ = level;
+    updateDisplay();
 }
 
 QString Score::getPlayerName()
@@ -61,4 +65,11 @@ int Score::getScore()
 void Score::freezeScore()
 {
     freezeScore_ = true;
+}
+
+void Score::updateDisplay()
+{
+    setPlainText(playerName_ + QString(" Score: ") +
+                 QString::number(score_) + "\n" +
+                 QString("Level: ") + QString::number(level_));
 }

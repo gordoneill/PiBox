@@ -32,6 +32,7 @@ AsteroidsGame::AsteroidsGame(int h, int v, QWidget * /*parent*/) :
 
     score_ = new Score();
     score_->setPlayerName("Player");
+    score_->setLevel(level_);
     scene_->addItem(score_);
     connect(score_, SIGNAL(endGame()), this, SLOT(endGame()));
 
@@ -79,6 +80,7 @@ void AsteroidsGame::increaseLevel()
     if (level_ < MAX_LEVEL)
     {
         level_++;
+        score_->setLevel(level_);
         spawnTimer_.stop();
         switch (level_)
         {
