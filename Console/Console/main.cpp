@@ -78,10 +78,5 @@ int main(int argc, char *argv[])
         perror("mq_notify");
     }
 
-    mq_unlink(sendQueueName);
-    mq_unlink(recvQueueName);
-    mq_close(sendBox);
-    mq_close(recvBox);
-
     return a.exec();
 }
