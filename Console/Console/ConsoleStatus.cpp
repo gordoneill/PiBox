@@ -5,21 +5,23 @@ ConsoleStatus::ConsoleStatus(int h, int /*v*/, QGraphicsItem * parent) :
     batteryLevel_(0),
     connected_(false),
     connectionPix_(nullptr),
-    batteryPix_(nullptr)
+    batteryTxt_(nullptr)
 {
     connectionPix_ = new QGraphicsPixmapItem(parent);
     connectionPix_->setPixmap(QPixmap(":/graphics/disconnected.png"));
     connectionPix_->setPos(h - connectionPix_->pixmap().width() - 5, 0);
 
-    batteryPix_ = new QGraphicsPixmapItem(parent);
-    batteryPix_->setPixmap(QPixmap(":/graphics/empty.png"));
-    batteryPix_->setPos(connectionPix_->pos().x() -
-                        batteryPix_->pixmap().width() - 5, 0);
+    batteryTxt_ = new QGraphicsTextItem(parent);
+    batteryTxt_->setDefaultTextColor(Qt::red);
+    batteryTxt_->setFont(QFont("Calibri",16));
+    batteryTxt_->setPlainText("|----|");
+    batteryTxt_->setPos(h-batteryTxt_->boundingRect().width() - 5,
+                        connectionPix_->pixmap().height() + 5);
 }
 
-QGraphicsPixmapItem * ConsoleStatus::getBatteryPix()
+QGraphicsTextItem * ConsoleStatus::getBatteryPix()
 {
-    return batteryPix_;
+    return batteryTxt_;
 }
 
 QGraphicsPixmapItem * ConsoleStatus::getConnectionPix()
@@ -43,31 +45,36 @@ void ConsoleStatus::updateDisplay()
 {
     if (batteryLevel_ < 10)
     {
-        batteryPix_->setPixmap(QPixmap(":/graphics/batt0.png"));
+        batteryTxt_->setPlainText("|----|");
+        batteryTxt_->setDefaultTextColor(Qt::red);
     }
     else if (batteryLevel_ < 35)
     {
-        batteryPix_->setPixmap(QPixmap(":/graphics/batt1.png"));
+        batteryTxt_->setPlainText("|+---|");
+        batteryTxt_->setDefaultTextColor(Qt::yellow);
     }
     else if (batteryLevel_ < 60)
     {
-        batteryPix_->setPixmap(QPixmap(":/graphics/batt2.png"));
+        batteryTxt_->setPlainText("|++--|");
+        batteryTxt_->setDefaultTextColor(Qt::green);
     }
     else if (batteryLevel_ < 85)
     {
-        batteryPix_->setPixmap(QPixmap(":/graphics/batt3.png"));
+        batteryTxt_->setPlainText("|+++-|");
+        batteryTxt_->setDefaultTextColor(Qt::green);
     }
     else
     {
-        batteryPix_->setPixmap(QPixmap(":/graphics/batt4.png"));
+        batteryTxt_->setPlainText("|++++|");
+        batteryTxt_->setDefaultTextColor(Qt::green);
     }
 
     if (connected_)
     {
-        connectionPix_->setPixmap(QPixmap(":/graphics/disconnected.png"));
+        connectionPix_->setPixmap(QPixmap(":/graphics/connected.png"));
     }
     else
     {
-        connectionPix_->setPixmap(QPixmap(":/graphics/connected.png"));
+        connectionPix_->setPixmap(QPixmap(":/graphics/disconnected.png"));
     }
 }

@@ -9,14 +9,14 @@ public:
     ConsoleStatus(int h, int v, QGraphicsItem * parent = nullptr);
     void updateBattery(unsigned int level);
     void updateConnection(bool status);
-    QGraphicsPixmapItem * getBatteryPix();
+    QGraphicsTextItem * getBatteryPix();
     QGraphicsPixmapItem * getConnectionPix();
 private:
     void updateDisplay();
     unsigned int batteryLevel_;
     bool connected_;
     QGraphicsPixmapItem * connectionPix_;
-    QGraphicsPixmapItem * batteryPix_;
+    QGraphicsTextItem * batteryTxt_;
 };
 
 #endif // CONSOLESTATUS_H
