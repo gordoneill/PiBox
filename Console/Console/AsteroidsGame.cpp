@@ -130,5 +130,4 @@ void AsteroidsGame::endGame()
 void AsteroidsGame::goBackToWelcome()
 {
     emit backToWelcome();
-    close();
 }

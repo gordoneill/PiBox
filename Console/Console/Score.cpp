@@ -28,7 +28,7 @@ void Score::decrease()
     {
         score_-=10;
 
-        if (score_ < 0)
+        if (score_ < -50)
         {
             emit endGame();
         }
