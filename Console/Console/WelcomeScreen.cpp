@@ -66,8 +66,20 @@ void WelcomeScreen::setConsoleStatus(ConsoleStatus * status)
     scene_->addItem(status->getBatteryPix());
 }
 
-void WelcomeScreen::keyPressEvent(QKeyEvent * /*event*/)
+void WelcomeScreen::keyPressEvent(QKeyEvent * event)
 {
-    gameSelection_ = eGames_T::ASTEROIDS;
-    emit gameSelected();
+    if (event->key() == Qt::Key_Space || event->key() == Qt::Key_Return)
+    {
+        gameSelection_ = eGames_T::ASTEROIDS;
+        emit gameSelected();
+    }
+}
+
+void WelcomeScreen::control(WMessage & msg)
+{
+    if (msg.type == eMsgTypes::BUTTON)
+    {
+        gameSelection_ = eGames_T::ASTEROIDS;
+        emit gameSelected();
+    }
 }

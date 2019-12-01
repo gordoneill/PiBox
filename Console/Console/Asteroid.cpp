@@ -6,7 +6,8 @@
 
 Asteroid::Asteroid(QGraphicsItem * parent) :
     QObject(),
-    QGraphicsPixmapItem(parent)
+    QGraphicsPixmapItem(parent),
+    moveTimer_()
 {
     setPixmap(QPixmap(":/graphics/asteroid.png"));
     connect(&moveTimer_, SIGNAL(timeout()), this, SLOT(move()));

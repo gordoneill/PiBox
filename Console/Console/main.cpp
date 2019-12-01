@@ -5,8 +5,9 @@
 #include "LogMgr.h"
 
 static mqd_t sendBox, recvBox;
+Console * console;
 
-static void recvBoxOnData(union sigval sv)
+static void recvBoxOnData(union sigval /*sv*/)
 {
     struct mq_attr MQStat;
     if(mq_getattr(recvBox, &MQStat) == ERROR)
@@ -14,29 +15,23 @@ static void recvBoxOnData(union sigval sv)
         perror("mq_getattr");
         return;
     }
-    printf("On Entering MQStat.mq_curmsgs: %ld\n", MQStat.mq_curmsgs);
 
-    Console * console = static_cast<Console *>(sv.sival_ptr);
     WMessage msgIn;
-    while (errno != EAGAIN)
+    for (int msgCount = 0; msgCount < MQStat.mq_curmsgs; msgCount++)
     {
         mq_receive(recvBox, (char *) &msgIn, 8192 , nullptr);
-        console->control(msgIn);
-        printf("Msg Received! Msg type: %d", msgIn.type);
+        console->addControl(msgIn);
+        printf("Msg Received! Msg type: %d\n", msgIn.type);
     }
-    
-    printf("On Exiting MQStat.mq_curmsgs: %ld\n", MQStat.mq_curmsgs);
 
     struct sigevent signal;
     signal.sigev_notify = SIGEV_THREAD;
     signal.sigev_notify_function = recvBoxOnData;
     signal.sigev_notify_attributes = nullptr;
-    signal.sigev_value.sival_ptr = console;
 
     if(mq_notify(recvBox, &signal) == ERROR)
     {
         perror("mq_notify");
-        return;
     }
 
     return;
@@ -46,7 +41,6 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    Console * console;
     console = new Console();
 
     struct mq_attr attr;
@@ -61,25 +55,26 @@ int main(int argc, char *argv[])
 
     if (sendBox == ERROR)
     {
-        mq_unlink("/sendBox");
+        mq_unlink(sendQueueName);
         std::cerr << "sendBox opening failed!" << std::endl;
     }
     if (recvBox == ERROR)
     {
-        mq_unlink("/recvBox");
+        mq_unlink(recvQueueName);
         std::cerr << "recvBox opening failed!" << std::endl;
     }
 
     struct sigevent signal;
     signal.sigev_notify = SIGEV_THREAD;
     signal.sigev_notify_function = recvBoxOnData;
-    signal.sigev_notify_attributes = NULL;
-    signal.sigev_value.sival_ptr = console;
+    signal.sigev_notify_attributes = nullptr;
 
     if(mq_notify(recvBox, &signal) == ERROR)
     {
         perror("mq_notify");
     }
+
+    printf("Console Started!\n");
 
     return a.exec();
 }

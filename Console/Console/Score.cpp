@@ -46,15 +46,20 @@ void Score::setPlayerName(QString name)
                  QString::number(score_));
 }
 
+QString Score::getPlayerName()
+{
+    return playerName_;
+}
+
 void Score::setLevel(int level)
 {
     level_ = level;
     updateDisplay();
 }
 
-QString Score::getPlayerName()
+void Score::setScore(int score)
 {
-    return playerName_;
+    score_ = score;
 }
 
 int Score::getScore()
@@ -62,9 +67,9 @@ int Score::getScore()
     return score_;
 }
 
-void Score::freezeScore()
+void Score::freezeScore(bool freezeState)
 {
-    freezeScore_ = true;
+    freezeScore_ = freezeState;
 }
 
 void Score::updateDisplay()

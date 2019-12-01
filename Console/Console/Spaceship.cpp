@@ -33,7 +33,7 @@ void Spaceship::keyPressEvent(QKeyEvent * event)
     }
 }
 
-void Spaceship::control(WMessage msg)
+void Spaceship::control(WMessage & msg)
 {
     if (this->scene() == nullptr)
     {

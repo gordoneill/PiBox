@@ -3,6 +3,7 @@
 #include <QBrush>
 #include <QImage>
 #include <iostream>
+#include <fstream>
 #include <unistd.h>
 #include <stdlib.h>
 
@@ -10,8 +11,10 @@ AsteroidsGame::AsteroidsGame(int h, int v, QWidget * /*parent*/) :
     scene_(nullptr),
     spaceship_(nullptr),
     spawnTimer_(),
+    levelTimer_(),
     gameOverTimer_(),
     score_(nullptr),
+    highScore_(0),
     level_(1)
 {
     scene_ = new QGraphicsScene();
@@ -30,6 +33,7 @@ AsteroidsGame::AsteroidsGame(int h, int v, QWidget * /*parent*/) :
     spaceship_->setFocus();
     scene_->addItem(spaceship_);
 
+    highScore_ = readScore();
     score_ = new Score();
     score_->setPlayerName("Player");
     score_->setLevel(level_);
@@ -52,13 +56,40 @@ AsteroidsGame::~AsteroidsGame()
     delete score_;
 }
 
+void AsteroidsGame::reset()
+{
+    for (auto * item : scene_->items())
+    {
+        scene_->removeItem(item);
+    }
+
+    spaceship_->setPos(this->width()/2-spaceship_->pixmap().width()/2,
+                       this->height()-spaceship_->pixmap().height()-10);
+    scene_->addItem(spaceship_);
+    spaceship_->setFocus();
+
+    level_ = 1;
+    score_ = new Score();
+    score_->setPlayerName("Player");
+    score_->setScore(0);
+    score_->setLevel(level_);
+    score_->freezeScore(false);
+    scene_->addItem(score_);
+
+    levelTimer_.stop();
+    levelTimer_.start(20000);
+
+    spawnTimer_.stop();
+    spawnTimer_.start(4000);
+}
+
 void AsteroidsGame::setConsoleStatus(ConsoleStatus * status)
 {
     scene_->addItem(status->getConnectionPix());
     scene_->addItem(status->getBatteryPix());
 }
 
-void AsteroidsGame::control(WMessage msg)
+void AsteroidsGame::control(WMessage & msg)
 {
     spaceship_->control(msg);
 }
@@ -107,14 +138,26 @@ void AsteroidsGame::increaseLevel()
 
 void AsteroidsGame::endGame()
 {
-    // save off score to file
-    // somehow get the game back to game selection
+    bool highScore = false;
+    if (score_->getScore() > highScore_)
+    {
+        saveScore();
+        highScore = true;
+    }
+
     spawnTimer_.stop();
     scene_->removeItem(spaceship_);
-    score_->freezeScore();
+    score_->freezeScore(true);
 
     QGraphicsTextItem * gameOver = new QGraphicsTextItem();
-    gameOver->setPlainText("GAME OVER");
+    if (highScore)
+    {
+        gameOver->setPlainText(" GAME OVER\nHIGH SCORE!");
+    }
+    else
+    {
+        gameOver->setPlainText("GAME OVER\n");
+    }
     gameOver->setDefaultTextColor(Qt::red);
     gameOver->setFont(QFont("Calibri",72));
     gameOver->setPos(scene_->sceneRect().width()/2 -
@@ -124,10 +167,39 @@ void AsteroidsGame::endGame()
     scene_->addItem(gameOver);
 
     connect(&gameOverTimer_, SIGNAL(timeout()), this, SLOT(goBackToWelcome()));
-    gameOverTimer_.start(5000);
+    gameOverTimer_.start(6000);
 }
 
 void AsteroidsGame::goBackToWelcome()
 {
+    gameOverTimer_.stop();
     emit backToWelcome();
+}
+
+void AsteroidsGame::saveScore()
+{
+    std::ofstream myfile;
+    myfile.open("score");
+    if (myfile.is_open())
+    {
+        myfile << score_->getScore();
+        myfile.close();
+    }
+}
+
+int AsteroidsGame::readScore()
+{
+    int score = 0;
+    std::ifstream myfile;
+    myfile.open("score");
+
+    if (myfile.is_open())
+    {
+        std::string x;
+        std::getline(myfile,x);
+        myfile.close();
+        score = atoi(x.c_str());
+    }
+
+    return score;
 }

@@ -19,7 +19,8 @@ public:
     AsteroidsGame(int h, int v, QWidget * parent = nullptr);
     ~AsteroidsGame();
     void setConsoleStatus(ConsoleStatus * status);
-    void control(WMessage msg);
+    void control(WMessage & msg);
+    void reset();
 signals:
     void backToWelcome();
 private slots:
@@ -28,12 +29,15 @@ private slots:
     void endGame();
     void goBackToWelcome();
 private:
+    void saveScore();
+    int readScore();
     QGraphicsScene * scene_;
     Spaceship * spaceship_;
     QTimer spawnTimer_;
     QTimer levelTimer_;
     QTimer gameOverTimer_;
     Score * score_;
+    int highScore_;
     int level_;
 };
 

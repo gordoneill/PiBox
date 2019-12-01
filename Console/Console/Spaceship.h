@@ -12,7 +12,7 @@ class Spaceship : public QObject, public QGraphicsPixmapItem
     Q_OBJECT
 public:
     Spaceship(QGraphicsItem * parent = nullptr);
-    void control(WMessage msg);
+    void control(WMessage & msg);
 private:
     void keyPressEvent(QKeyEvent * event);
     void shoot();
