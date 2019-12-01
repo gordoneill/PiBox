@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
     struct sigevent signal;
     signal.sigev_notify = SIGEV_THREAD;
     signal.sigev_notify_function = recvBoxOnData;
-    signal.sigev_notify_attributes = nullptr;
+    signal.sigev_notify_attributes = NULL;
     signal.sigev_value.sival_ptr = console;
 
     if(mq_notify(recvBox, &signal) == ERROR)
