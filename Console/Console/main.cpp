@@ -14,6 +14,7 @@ static void recvBoxOnData(union sigval sv)
         perror("mq_getattr");
         return;
     }
+    printf("On Entering MQStat.mq_curmsgs: %ld\n", MQStat.mq_curmsgs);
 
     Console * console = static_cast<Console *>(sv.sival_ptr);
     WMessage msgIn;
@@ -23,6 +24,8 @@ static void recvBoxOnData(union sigval sv)
         console->control(msgIn);
         printf("Msg Received! Msg type: %d", msgIn.type);
     }
+    
+    printf("On Exiting MQStat.mq_curmsgs: %ld\n", MQStat.mq_curmsgs);
 
     struct sigevent signal;
     signal.sigev_notify = SIGEV_THREAD;
