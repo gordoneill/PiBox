@@ -11,6 +11,7 @@ class Asteroid : public QObject, public QGraphicsPixmapItem
     Q_OBJECT
 public:
     Asteroid(QGraphicsItem * parent = nullptr);
+    void freeze();
 signals:
     void endGame();
 private slots:

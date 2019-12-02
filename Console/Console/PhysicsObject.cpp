@@ -63,6 +63,41 @@ void PhysicsObject::verifyLimits()
         position_.y = positionLimits_.bottom;
         holdUp();
     }
+
+
+    if (velocity_.x > VELOCITY_CAP)
+    {
+        velocity_.x = VELOCITY_CAP;
+    }
+    if (velocity_.x < (VELOCITY_CAP * -1))
+    {
+        velocity_.x = VELOCITY_CAP * -1;
+    }
+    if (velocity_.y > VELOCITY_CAP)
+    {
+        velocity_.y = VELOCITY_CAP;
+    }
+    if (velocity_.y < (VELOCITY_CAP * -1))
+    {
+        velocity_.y = VELOCITY_CAP * -1;
+    }
+
+    if (acceleration_.x > ACCEL_CAP)
+    {
+        acceleration_.x = ACCEL_CAP;
+    }
+    if (acceleration_.x < (ACCEL_CAP * -1))
+    {
+        acceleration_.x = ACCEL_CAP * -1;
+    }
+    if (acceleration_.y > ACCEL_CAP)
+    {
+        acceleration_.y = ACCEL_CAP;
+    }
+    if (acceleration_.y < (ACCEL_CAP * -1))
+    {
+        acceleration_.y = ACCEL_CAP * -1;
+    }
 }
 
 void PhysicsObject::applyFriction()

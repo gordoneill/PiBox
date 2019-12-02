@@ -14,6 +14,11 @@ Asteroid::Asteroid(QGraphicsItem * parent) :
     moveTimer_.start(5);
 }
 
+void Asteroid::freeze()
+{
+    moveTimer_.stop();
+}
+
 void Asteroid::move()
 {
     if (this->scene() == nullptr)
@@ -24,16 +29,6 @@ void Asteroid::move()
     {
         setPos(x(),y()+1);
 
-        // if a colliding items is the spaceship, end game
-        for (auto * item : collidingItems())
-        {
-            if (typeid(*item) == typeid(Spaceship))
-            {
-                setPixmap(QPixmap(":/graphics/explosion.png"));
-                emit endGame();
-            }
-        }
-
         if (pos().y() > this->scene()->height())
         {
             // decrease the score
@@ -41,6 +36,17 @@ void Asteroid::move()
 
             scene()->removeItem(this);
             delete this;
+        }
+
+        // if a colliding items is the spaceship, end game
+        for (auto * item : collidingItems())
+        {
+            if (typeid(*item) == typeid(Spaceship))
+            {
+                emit endGame();
+                freeze();
+                setPixmap(QPixmap(":/graphics/explosion.png"));
+            }
         }
     }
 }

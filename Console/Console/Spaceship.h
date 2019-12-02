@@ -16,6 +16,7 @@ public:
     Spaceship(int h, int v, QGraphicsItem * parent = nullptr);
     void control(WMessage & msg);
     void setPos(qreal x, qreal y);
+    void freeze(bool freezeState);
 private slots:
     void redraw();
 private:

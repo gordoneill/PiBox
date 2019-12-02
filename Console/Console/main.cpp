@@ -40,6 +40,7 @@ static void recvBoxOnData(union sigval /*sv*/)
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setOverrideCursor(Qt::BlankCursor);
 
     console = new Console();
 

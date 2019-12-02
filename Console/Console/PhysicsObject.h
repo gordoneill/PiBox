@@ -4,8 +4,10 @@
 #include <math.h>
 #include <tuple>
 
-#define ACCEL_FRIC 1.05
+#define ACCEL_FRIC 1.03
 #define VELOCITY_FRIC 1.02
+#define ACCEL_CAP 0.3
+#define VELOCITY_CAP 12
 
 struct PhysicsComponent_T {
     double x;

@@ -67,7 +67,7 @@ int Score::getScore()
     return score_;
 }
 
-void Score::freezeScore(bool freezeState)
+void Score::freeze(bool freezeState)
 {
     freezeScore_ = freezeState;
 }

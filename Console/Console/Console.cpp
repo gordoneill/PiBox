@@ -63,11 +63,12 @@ void Console::init()
     welcome_->showFullScreen();
     welcome_->setFocus();
 
-    introView_->close();
     if (game_ != nullptr)
     {
         game_->close();
     }
+
+    introView_->close();
 }
 
 void Console::onGameSelected()

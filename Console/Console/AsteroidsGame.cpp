@@ -66,6 +66,8 @@ void AsteroidsGame::reset()
     spaceship_->setPos(this->width()/2-spaceship_->pixmap().width()/2,
                        this->height()-spaceship_->pixmap().height()-10);
     spaceship_->holdUp();
+    spaceship_->freeze(false);
+    spaceship_->setPixmap(QPixmap(":/graphics/spaceship.png"));
     scene_->addItem(spaceship_);
     spaceship_->setFocus();
 
@@ -74,7 +76,7 @@ void AsteroidsGame::reset()
     score_->setPlayerName("Player");
     score_->setScore(0);
     score_->setLevel(level_);
-    score_->freezeScore(false);
+    score_->freeze(false);
     scene_->addItem(score_);
 
     levelTimer_.stop();
@@ -137,46 +139,6 @@ void AsteroidsGame::increaseLevel()
     }
 }
 
-void AsteroidsGame::endGame()
-{
-    bool highScore = false;
-    if (score_->getScore() > highScore_)
-    {
-        saveScore();
-        highScore = true;
-    }
-
-    spawnTimer_.stop();
-    scene_->removeItem(spaceship_);
-    score_->freezeScore(true);
-
-    QGraphicsTextItem * gameOver = new QGraphicsTextItem();
-    if (highScore)
-    {
-        gameOver->setPlainText(" GAME OVER\nHIGH SCORE!");
-    }
-    else
-    {
-        gameOver->setPlainText("GAME OVER\n");
-    }
-    gameOver->setDefaultTextColor(Qt::red);
-    gameOver->setFont(QFont("Calibri",72));
-    gameOver->setPos(scene_->sceneRect().width()/2 -
-                        gameOver->boundingRect().width()/2,
-                     scene_->sceneRect().height()/2 -
-                        gameOver->boundingRect().height()/2);
-    scene_->addItem(gameOver);
-
-    connect(&gameOverTimer_, SIGNAL(timeout()), this, SLOT(goBackToWelcome()));
-    gameOverTimer_.start(6000);
-}
-
-void AsteroidsGame::goBackToWelcome()
-{
-    gameOverTimer_.stop();
-    emit backToWelcome();
-}
-
 void AsteroidsGame::saveScore()
 {
     std::ofstream myfile;
@@ -203,4 +165,46 @@ int AsteroidsGame::readScore()
     }
 
     return score;
+}
+
+void AsteroidsGame::endGame()
+{
+    bool highScore = false;
+    if (score_->getScore() > highScore_)
+    {
+        saveScore();
+        highScore = true;
+    }
+
+    spawnTimer_.stop();
+    spaceship_->holdUp();
+    spaceship_->freeze(true);
+    spaceship_->setPixmap(QPixmap(":/graphics/explosion.png"));
+    score_->freeze(true);
+
+    QGraphicsTextItem * gameOver = new QGraphicsTextItem();
+    if (highScore)
+    {
+        gameOver->setPlainText(" GAME OVER\nHIGH SCORE!");
+    }
+    else
+    {
+        gameOver->setPlainText("GAME OVER\n");
+    }
+    gameOver->setDefaultTextColor(Qt::red);
+    gameOver->setFont(QFont("Calibri",72));
+    gameOver->setPos(scene_->sceneRect().width()/2 -
+                        gameOver->boundingRect().width()/2,
+                     scene_->sceneRect().height()/2 -
+                        gameOver->boundingRect().height()/2);
+    scene_->addItem(gameOver);
+
+    connect(&gameOverTimer_, SIGNAL(timeout()), this, SLOT(goBackToWelcome()));
+    gameOverTimer_.start(6000);
+}
+
+void AsteroidsGame::goBackToWelcome()
+{
+    gameOverTimer_.stop();
+    emit backToWelcome();
 }

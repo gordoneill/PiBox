@@ -71,6 +71,18 @@ void Spaceship::setPos(qreal x, qreal y)
     QGraphicsPixmapItem::setPos(x, y);
 }
 
+void Spaceship::freeze(bool freezeState)
+{
+    if (freezeState)
+    {
+        updateTimer_.stop();
+    }
+    else
+    {
+        updateTimer_.start(10);
+    }
+}
+
 void Spaceship::redraw()
 {
     PhysicsObject::update();
@@ -89,6 +101,6 @@ double Spaceship::controlToAcceleration(uint32_t control)
 {
     double accelCtrl = static_cast<double>(control);
     accelCtrl -= 50;
-    accelCtrl /= 200;
+    accelCtrl /= 250;
     return accelCtrl;
 }

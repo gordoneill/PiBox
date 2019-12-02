@@ -16,7 +16,7 @@ public:
     void setLevel(int level);
     void setScore(int score);
     int getScore();
-    void freezeScore(bool freezeState);
+    void freeze(bool freezeState);
 signals:
     void endGame();
 private:
