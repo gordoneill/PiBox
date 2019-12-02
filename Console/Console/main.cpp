@@ -5,7 +5,7 @@
 #include "LogMgr.h"
 
 static mqd_t sendBox, recvBox;
-Console * console;
+static Console * console;
 
 static void recvBoxOnData(union sigval /*sv*/)
 {
@@ -73,8 +73,6 @@ int main(int argc, char *argv[])
     {
         perror("mq_notify");
     }
-
-    printf("Console Started!\n");
 
     return a.exec();
 }

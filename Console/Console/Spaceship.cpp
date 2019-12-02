@@ -2,10 +2,20 @@
 #include "Laser.h"
 #include <iostream>
 
-Spaceship::Spaceship(QGraphicsItem * parent) :
+Spaceship::Spaceship(int h, int v, QGraphicsItem * parent) :
     QGraphicsPixmapItem(parent)
 {
     setPixmap(QPixmap(":/graphics/spaceship.png"));
+
+    PositionLimits_T limits;
+    limits.top = 0;
+    limits.bottom = v - pixmap().height();
+    limits.left = 0;
+    limits.right = h - pixmap().width();
+    setLimits(limits);
+
+    connect(&updateTimer_, SIGNAL(timeout()), this, SLOT(redraw()));
+    updateTimer_.start(10);
 }
 
 void Spaceship::keyPressEvent(QKeyEvent * event)
@@ -19,10 +29,10 @@ void Spaceship::keyPressEvent(QKeyEvent * event)
         switch(event->key())
         {
             case Qt::Key_Left:
-                this->move(true);
+                this->updateAcceleration(controlToAcceleration(0), 0);
                 break;
             case Qt::Key_Right:
-                this->move(false);
+                this->updateAcceleration(controlToAcceleration(100), 0);
                 break;
             case Qt::Key_Space:
                 this->shoot();
@@ -47,14 +57,7 @@ void Spaceship::control(WMessage & msg)
                 this->shoot();
                 break;
             case eMsgTypes::DIRECTION:
-                if (msg.x_dir < 10)
-                {
-                    this->move(true);
-                }
-                else if (msg.x_dir > 10)
-                {
-                    this->move(false);
-                }
+                this->updateAcceleration(controlToAcceleration(msg.x_dir), 0);
                 break;
             default:
             break;
@@ -62,29 +65,30 @@ void Spaceship::control(WMessage & msg)
     }
 }
 
+void Spaceship::setPos(qreal x, qreal y)
+{
+    position_ = {x, y};
+    QGraphicsPixmapItem::setPos(x, y);
+}
+
+void Spaceship::redraw()
+{
+    PhysicsObject::update();
+    QGraphicsPixmapItem::setPos(position_.x, position_.y);
+}
+
 void Spaceship::shoot()
 {
     Laser * laser = new Laser();
-    laser->setPos(
-                x()+pixmap().width()/2-laser->pixmap().width()/2,
-                y()-laser->pixmap().height());
+    laser->setPos(x()+pixmap().width()/2-laser->pixmap().width()/2,
+                  y()-laser->pixmap().height());
     this->scene()->addItem(laser);
 }
 
-void Spaceship::move(bool direction)
+double Spaceship::controlToAcceleration(uint32_t control)
 {
-    if (direction)
-    {
-        if (pos().x() > 0)
-        {
-            setPos(x()-10, y());
-        }
-    }
-    else
-    {
-        if (pos().x() + pixmap().width() < this->scene()->width())
-        {
-            setPos(x()+10, y());
-        }
-    }
+    double accelCtrl = static_cast<double>(control);
+    accelCtrl -= 50;
+    accelCtrl /= 200;
+    return accelCtrl;
 }

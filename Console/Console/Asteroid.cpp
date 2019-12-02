@@ -29,6 +29,7 @@ void Asteroid::move()
         {
             if (typeid(*item) == typeid(Spaceship))
             {
+                setPixmap(QPixmap(":/graphics/explosion.png"));
                 emit endGame();
             }
         }

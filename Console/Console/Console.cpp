@@ -82,7 +82,6 @@ void Console::onGameSelected()
     }
     else
     {
-        printf("reset\n");
         game_->reset();
     }
 

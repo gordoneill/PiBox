@@ -26,7 +26,7 @@ AsteroidsGame::AsteroidsGame(int h, int v, QWidget * /*parent*/) :
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setFixedSize(h, v);
 
-    spaceship_ = new Spaceship();
+    spaceship_ = new Spaceship(h, v);
     spaceship_->setFlag(QGraphicsItem::ItemIsFocusable);
     spaceship_->setPos(this->width()/2-spaceship_->pixmap().width()/2,
                        this->height()-spaceship_->pixmap().height()-10);
@@ -65,6 +65,7 @@ void AsteroidsGame::reset()
 
     spaceship_->setPos(this->width()/2-spaceship_->pixmap().width()/2,
                        this->height()-spaceship_->pixmap().height()-10);
+    spaceship_->holdUp();
     scene_->addItem(spaceship_);
     spaceship_->setFocus();
 

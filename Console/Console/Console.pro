@@ -26,6 +26,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     Console.cpp \
     ConsoleStatus.cpp \
+    PhysicsObject.cpp \
     WelcomeScreen.cpp \
         main.cpp \
     Laser.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
     AsteroidsGame.h \
     Console.h \
     ConsoleStatus.h \
+    PhysicsObject.h \
     Spaceship.h \
     Laser.h \
     Asteroid.h \

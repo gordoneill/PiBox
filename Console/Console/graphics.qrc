@@ -8,5 +8,6 @@
         <file>welcome.jpg</file>
         <file>connected.png</file>
         <file>disconnected.png</file>
+        <file>explosion.png</file>
     </qresource>
 </RCC>
