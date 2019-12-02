@@ -88,14 +88,14 @@ int main(int argc, char *argv[])
     recvBox = mq_open(recvQueueName, O_RDWR|O_CREAT|O_EXCL, QUEUE_PERMISSIONS, attr);
     if (sendBox == ERROR)
     {
-        mq_unlink("/sendBox");
+        mq_unlink(sendQueueName);
         okay = false;
         logger.logEvent(eLevels::FATAL, "sendBox opening failed!");
         std::cerr << "sendBox opening failed!" << std::endl;
     }
     if (recvBox == ERROR)
     {
-        mq_unlink("/recvBox");
+        mq_unlink(recvQueueName);
         okay = false;
         logger.logEvent(eLevels::FATAL, "recvBox opening failed!");
         std::cerr << "recvBox opening failed!" << std::endl;
