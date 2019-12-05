@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
             WPacket payload = TxWMsg(msgIn);
             logger.logEvent(eLevels::INFO, "sent message");
             sendQueue.pop();
-            okay = okay && connection.send(sizeof(payload), (char *) &payload);
+            connection.send(sizeof(payload), (char *) &payload);
         }
     }
 

@@ -12,9 +12,9 @@ ConsoleStatus::ConsoleStatus(int h, int /*v*/, QGraphicsItem * parent) :
     connectionPix_->setPos(h - connectionPix_->pixmap().width() - 5, 0);
 
     batteryTxt_ = new QGraphicsTextItem(parent);
-    batteryTxt_->setDefaultTextColor(Qt::red);
+    batteryTxt_->setDefaultTextColor(Qt::yellow);
     batteryTxt_->setFont(QFont("Calibri",16));
-    batteryTxt_->setPlainText("|----|");
+    batteryTxt_->setPlainText("|????|");
     batteryTxt_->setPos(h-batteryTxt_->boundingRect().width() - 5,
                         connectionPix_->pixmap().height() + 5);
 }
@@ -76,5 +76,7 @@ void ConsoleStatus::updateDisplay()
     else
     {
         connectionPix_->setPixmap(QPixmap(":/graphics/disconnected.png"));
+        batteryTxt_->setPlainText("|????|");
+        batteryTxt_->setDefaultTextColor(Qt::yellow);
     }
 }

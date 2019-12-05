@@ -86,7 +86,7 @@ bool Bluetooth::send(int size, char * data)
         okay = okay && write(client_, data, size) == size;
         if(!okay)
         {
-            logger_.logEvent(eLevels::FATAL, 
+            logger_.logEvent(eLevels::WARNING,
                 "Bluetooth::send - failed to write");
         }
     }

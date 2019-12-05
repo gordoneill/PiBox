@@ -29,7 +29,7 @@ struct WPacket {
 	word_0(0),
 	word_1(0),
 	word_2(0){}
-	uint32_t 	word_0; //header part 2<bits95-64>
+        uint32_t    word_0; //header part 2<bits95-64>
 	uint32_t    word_1; //data part 1<bits63-32>
 	uint32_t    word_2; //data part 2<bits31-0>
 };

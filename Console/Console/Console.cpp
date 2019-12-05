@@ -44,7 +44,7 @@ Console::Console(QWidget * /*parent*/) :
     welcomeTimer_.start(5000);
 
     connect(&connectionTimer_, SIGNAL(timeout()), this, SLOT(connectionTimeout()));
-    connectionTimer_.start(2000);
+    connectionTimer_.start(6000);
 
     connect(&controlTimer_, SIGNAL(timeout()), this, SLOT(control()));
     controlTimer_.start(1);
@@ -60,6 +60,7 @@ void Console::init()
 {
     welcomeTimer_.stop();
 
+    welcome_->setConsoleStatus(status_);
     welcome_->showFullScreen();
     welcome_->setFocus();
 
@@ -84,6 +85,7 @@ void Console::onGameSelected()
     else
     {
         game_->reset();
+        game_->setConsoleStatus(status_);
     }
 
     game_->showFullScreen();
@@ -107,7 +109,7 @@ void Console::control()
         {
             case eMsgTypes::STATUS:
                 connectionTimer_.stop();
-                connectionTimer_.start(2000);
+                connectionTimer_.start(6000);
                 status_->updateConnection(true);
                 status_->updateBattery(msg.battery);
                 break;
